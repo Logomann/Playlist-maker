@@ -17,7 +17,7 @@
             android:background="@color/white"
             android:padding="@dimen/title_padding"
             android:src="@drawable/arrow_back"
-            app:tint="@color/black"
+            app:tint="@color/icon_button_black"
             android:layout_gravity="center"
             android:contentDescription="@string/back_button" />
 
@@ -30,7 +30,7 @@
             android:paddingEnd="@dimen/title_padding"
             android:paddingBottom="@dimen/title_padding"
             android:text="@string/settings"
-            android:textColor="@color/black"
+            android:textColor="@color/icon_button_black"
             android:textSize="@dimen/text_size_button" />
     </LinearLayout>
 
