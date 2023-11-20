@@ -14,7 +14,7 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/name_text_white"
+            android:background="@color/white"
             android:padding="@dimen/title_padding"
             android:src="@drawable/arrow_back"
             app:tint="@color/black"
@@ -50,7 +50,7 @@
             android:paddingEnd="@dimen/settings_padding_end"
             android:paddingBottom="@dimen/settings_padding_top_bot"
             android:text="@string/dark_mode"
-            android:textColor="@color/setting_black"
+            android:textColor="@color/black"
             android:textSize="@dimen/setting_text_size" />
 
         <androidx.appcompat.widget.SwitchCompat
@@ -82,7 +82,7 @@
             android:paddingEnd="@dimen/settings_padding_end"
             android:paddingBottom="@dimen/settings_padding_top_bot"
             android:text="@string/share_app"
-            android:textColor="@color/setting_black"
+            android:textColor="@color/black"
             android:textSize="@dimen/setting_text_size" />
 
         <ImageButton
@@ -92,7 +92,7 @@
             android:layout_marginTop="@dimen/setting_margin_top"
             android:layout_marginEnd="@dimen/setting_margin_end"
             android:layout_marginBottom="@dimen/setting_margin_bot"
-            android:background="@color/name_text_white"
+            android:background="@color/white"
             android:src="@drawable/share"
             android:layout_gravity="center"
             android:contentDescription="@string/share_app" />
@@ -113,7 +113,7 @@
             android:paddingEnd="@dimen/settings_padding_end"
             android:paddingBottom="@dimen/settings_padding_top_bot"
             android:text="@string/text_to_support"
-            android:textColor="@color/setting_black"
+            android:textColor="@color/black"
             android:textSize="@dimen/setting_text_size" />
 
         <ImageButton
@@ -121,7 +121,7 @@
             android:layout_height="@dimen/setting_image_size"
             android:src="@drawable/support"
             android:layout_gravity="center"
-            android:background="@color/name_text_white"
+            android:background="@color/white"
             android:layout_marginStart="@dimen/setting_image_margin_start"
             android:layout_marginEnd="@dimen/setting_margin_end"
             android:layout_marginTop="@dimen/setting_margin_top"
@@ -148,7 +148,7 @@
             android:paddingBottom="@dimen/settings_padding_top_bot"
             android:textSize="@dimen/setting_text_size"
             android:fontFamily="@font/ys_display_reg"
-            android:textColor="@color/setting_black"
+            android:textColor="@color/black"
             android:text="@string/user_agreement" />
 
         <ImageButton
@@ -156,7 +156,7 @@
             android:layout_height="@dimen/setting_image_size"
             android:src="@drawable/arrow_forward"
             android:layout_gravity="center"
-            android:background="@color/name_text_white"
+            android:background="@color/white"
             android:layout_marginStart="@dimen/setting_image_margin_start"
             android:layout_marginEnd="@dimen/setting_margin_end"
             android:layout_marginTop="@dimen/setting_margin_top"
