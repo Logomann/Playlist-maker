@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name" translatable="false">Playlist maker</string>
-    <string name="search">Поиск</string>
-    <string name="media_library">Медиатека</string>
-    <string name="settings">Настройки</string>
-    <string name="dark_mode">Темная тема</string>
-    <string name="share_app">Поделиться приложением</string>
-    <string name="text_to_support">Написать в поддержку</string>
-    <string name="user_agreement">Пользовательское соглашение</string>
-    <string name="back_button">Кнопка назад</string>
+    <string name="search">Search</string>
+    <string name="media_library">Media Library</string>
+    <string name="settings">Settings</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="share_app">Share App</string>
+    <string name="text_to_support">Ask Support</string>
+    <string name="user_agreement">User\'s Agreement</string>
+    <string name="back_button">Back button</string>
 
 </resources>
