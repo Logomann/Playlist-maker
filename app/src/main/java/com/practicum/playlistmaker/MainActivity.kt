@@ -1,10 +1,10 @@
 package com.practicum.playlistmaker
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,25 +16,19 @@ class MainActivity : AppCompatActivity() {
 
         val searchClickListener: View.OnClickListener = object : View.OnClickListener {
             override fun onClick(v: View?) {
-                Toast.makeText(
-                    this@MainActivity,
-                    getString(R.string.press_search_btn), Toast.LENGTH_SHORT
-                ).show()
+                val intent = Intent(this@MainActivity, SearchActivity::class.java)
+                startActivity(intent)
             }
 
         }
         searchBtn.setOnClickListener(searchClickListener)
         mediaBtn.setOnClickListener {
-            Toast.makeText(
-                this@MainActivity,
-                getString(R.string.press_media_btn), Toast.LENGTH_SHORT
-            ).show()
+            val intent = Intent(this, MediaLibraryActivity::class.java)
+            startActivity(intent)
         }
         settingsBtn.setOnClickListener {
-            Toast.makeText(
-                this@MainActivity,
-                getString(R.string.press_settings_btn), Toast.LENGTH_SHORT
-            ).show()
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
         }
 
     }

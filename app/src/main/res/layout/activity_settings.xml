@@ -12,14 +12,15 @@
         android:padding="4dp">
 
         <ImageButton
+            android:id="@+id/settings_arrow_back_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:background="@color/white"
+            android:contentDescription="@string/back_button"
             android:padding="@dimen/title_padding"
             android:src="@drawable/arrow_back"
-            app:tint="@color/icon_button_black"
-            android:layout_gravity="center"
-            android:contentDescription="@string/back_button" />
+            app:tint="@color/icon_button_black" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -37,8 +38,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="24dp">
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="0dp"
@@ -88,14 +89,14 @@
         <ImageButton
             android:layout_width="@dimen/setting_image_size"
             android:layout_height="@dimen/setting_image_size"
+            android:layout_gravity="center"
             android:layout_marginStart="@dimen/setting_image_margin_start"
             android:layout_marginTop="@dimen/setting_margin_top"
             android:layout_marginEnd="@dimen/setting_margin_end"
             android:layout_marginBottom="@dimen/setting_margin_bot"
             android:background="@color/white"
-            android:src="@drawable/share"
-            android:layout_gravity="center"
-            android:contentDescription="@string/share_app" />
+            android:contentDescription="@string/share_app"
+            android:src="@drawable/share" />
 
     </LinearLayout>
 
@@ -119,18 +120,18 @@
         <ImageButton
             android:layout_width="@dimen/setting_image_size"
             android:layout_height="@dimen/setting_image_size"
-            android:src="@drawable/support"
             android:layout_gravity="center"
-            android:background="@color/white"
             android:layout_marginStart="@dimen/setting_image_margin_start"
-            android:layout_marginEnd="@dimen/setting_margin_end"
             android:layout_marginTop="@dimen/setting_margin_top"
+            android:layout_marginEnd="@dimen/setting_margin_end"
             android:layout_marginBottom="@dimen/setting_margin_bot"
-            android:paddingEnd="@dimen/setting_support_padding_start"
+            android:background="@color/white"
+            android:contentDescription="@string/text_to_support"
             android:paddingStart="@dimen/setting_support_padding_start"
-            android:paddingBottom="2.9dp"
             android:paddingTop="3.1dp"
-            android:contentDescription="@string/text_to_support" />
+            android:paddingEnd="@dimen/setting_support_padding_start"
+            android:paddingBottom="2.9dp"
+            android:src="@drawable/support" />
 
     </LinearLayout>
 
@@ -140,28 +141,28 @@
 
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:paddingTop="@dimen/settings_padding_top_bot"
+            android:layout_weight="1"
+            android:fontFamily="@font/ys_display_reg"
             android:paddingStart="@dimen/button_padding"
+            android:paddingTop="@dimen/settings_padding_top_bot"
             android:paddingEnd="@dimen/settings_padding_end"
             android:paddingBottom="@dimen/settings_padding_top_bot"
-            android:textSize="@dimen/setting_text_size"
-            android:fontFamily="@font/ys_display_reg"
+            android:text="@string/user_agreement"
             android:textColor="@color/black"
-            android:text="@string/user_agreement" />
+            android:textSize="@dimen/setting_text_size" />
 
         <ImageButton
             android:layout_width="@dimen/setting_image_size"
             android:layout_height="@dimen/setting_image_size"
-            android:src="@drawable/arrow_forward"
             android:layout_gravity="center"
-            android:background="@color/white"
             android:layout_marginStart="@dimen/setting_image_margin_start"
-            android:layout_marginEnd="@dimen/setting_margin_end"
             android:layout_marginTop="@dimen/setting_margin_top"
+            android:layout_marginEnd="@dimen/setting_margin_end"
             android:layout_marginBottom="@dimen/setting_margin_bot"
-            android:contentDescription="@string/user_agreement" />
+            android:background="@color/white"
+            android:contentDescription="@string/user_agreement"
+            android:src="@drawable/arrow_forward" />
     </LinearLayout>
 
 </LinearLayout>
