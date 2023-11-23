@@ -29,6 +29,7 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/search_btn"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_gravity="center"
@@ -52,6 +53,7 @@
             app:iconTint="@color/icon_button_black" />
 
         <Button
+            android:id="@+id/media_btn"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_gravity="center"
@@ -75,6 +77,7 @@
             app:iconTint="@color/icon_button_black" />
 
         <Button
+            android:id="@+id/settings_btn"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_gravity="center"

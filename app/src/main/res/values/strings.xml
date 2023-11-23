@@ -8,5 +8,8 @@
     <string name="text_to_support">Ask Support</string>
     <string name="user_agreement">User\'s Agreement</string>
     <string name="back_button">Back button</string>
+    <string name="press_search_btn">Search button pressed</string>
+    <string name="press_media_btn">Media button pressed</string>
+    <string name="press_settings_btn">Settings button pressed</string>
 
 </resources>
