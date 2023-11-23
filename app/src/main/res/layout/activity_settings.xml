@@ -61,7 +61,7 @@
             android:layout_marginTop="@dimen/setting_switch_margin_top"
             android:layout_marginEnd="@dimen/settings_padding_end"
             android:layout_marginBottom="@dimen/setting_switch_padding_bot"
-            android:paddingStart="9dp"
+            android:paddingStart="8dp"
             android:paddingTop="@dimen/setting_switch_padding_bot"
             android:paddingEnd="@dimen/setting_margin_end"
             android:paddingBottom="@dimen/setting_switch_padding_bot"

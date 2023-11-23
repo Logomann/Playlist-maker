@@ -10,14 +10,14 @@
     <dimen name="button_margin_top_bottom">8dp</dimen>
     <dimen name="header_margin_end">52dp</dimen>
     <dimen name="setting_text_size">16sp</dimen>
-    <dimen name="settings_padding_top_bot">21dp</dimen>
-    <dimen name="settings_padding_end">6dp</dimen>
+    <dimen name="settings_padding_top_bot">20dp</dimen>
+    <dimen name="settings_padding_end">8dp</dimen>
     <dimen name="setting_image_size">24dp</dimen>
-    <dimen name="setting_margin_top">19dp</dimen>
+    <dimen name="setting_margin_top">20dp</dimen>
     <dimen name="setting_margin_end">12dp</dimen>
     <dimen name="setting_margin_bot">18dp</dimen>
-    <dimen name="setting_switch_padding_bot">11dp</dimen>
-    <dimen name="setting_switch_margin_top">10dp</dimen>
-    <dimen name="setting_support_padding_start">2dp</dimen>
+    <dimen name="setting_switch_padding_bot">12dp</dimen>
+    <dimen name="setting_switch_margin_top">12dp</dimen>
+    <dimen name="setting_support_padding_start">4dp</dimen>
     <dimen name="setting_image_margin_start">8dp</dimen>
 </resources>
