@@ -12,11 +12,10 @@ import android.widget.ImageButton
 
 class SearchActivity : AppCompatActivity() {
     companion object {
-        const val EDIT_FIELD = "EDIT_FIELD"
-        const val FIELD_TEXT = ""
+        private const val EDIT_FIELD = "EDIT_FIELD"
     }
 
-    private var editText = FIELD_TEXT
+    private var editText = ""
     private lateinit var editField: EditText
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -25,7 +24,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        editText = savedInstanceState.getString(EDIT_FIELD, FIELD_TEXT)
+        editText = savedInstanceState.getString(EDIT_FIELD, "")
         editField.setText(editText)
     }
 
