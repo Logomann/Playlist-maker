@@ -2,6 +2,10 @@
 <resources>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
-    <color name="icon_button_black">#1A1B22</color>
-    <color name="main_background_blue">#3772E7</color>
+    <color name="settings_text_color">#1A1B22</color>
+    <color name="main_background">#3772E7</color>
+    <color name="settings_background">#FFFFFF</color>
+    <color name="main_text_color">#1A1B22</color>
+    <color name="search_background">#E6E8EB</color>
+    <color name="search_hint">#AEAFB4</color>
 </resources>

@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/settings_background"
     android:orientation="vertical">
 
     <LinearLayout
@@ -16,22 +17,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@color/white"
+            android:background="@color/settings_background"
             android:contentDescription="@string/back_button"
             android:padding="@dimen/title_padding"
             android:src="@drawable/arrow_back"
-            app:tint="@color/icon_button_black" />
+            app:tint="@color/settings_text_color" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:fontFamily="@font/ys_display_medium"
-            android:paddingStart="@dimen/title_padding"
+            android:paddingHorizontal="@dimen/title_padding"
             android:paddingTop="10dp"
-            android:paddingEnd="@dimen/title_padding"
             android:paddingBottom="@dimen/title_padding"
             android:text="@string/settings"
-            android:textColor="@color/icon_button_black"
+            android:textColor="@color/settings_text_color"
+            android:textFontWeight="500"
             android:textSize="@dimen/text_size_button" />
     </LinearLayout>
 
@@ -42,31 +43,18 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:fontFamily="@font/ys_display_reg"
-            android:paddingStart="@dimen/button_padding"
-            android:paddingTop="@dimen/settings_padding_top_bot"
-            android:paddingEnd="@dimen/settings_padding_end"
-            android:paddingBottom="@dimen/settings_padding_top_bot"
-            android:text="@string/dark_mode"
-            android:textColor="@color/black"
-            android:textSize="@dimen/setting_text_size" />
+            style="@style/SettingsTextStyle"
+            android:text="@string/dark_mode" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:layout_width="56dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/setting_switch_margin_top"
+            android:layout_marginVertical="@dimen/setting_switch_margin_top"
             android:layout_marginEnd="@dimen/settings_padding_end"
-            android:layout_marginBottom="@dimen/setting_switch_padding_bot"
+            android:paddingVertical="@dimen/setting_switch_padding_bot"
             android:paddingStart="8dp"
-            android:paddingTop="@dimen/setting_switch_padding_bot"
-            android:paddingEnd="@dimen/setting_margin_end"
-            android:paddingBottom="@dimen/setting_switch_padding_bot"
-
-            />
+            android:paddingEnd="@dimen/setting_margin_end" />
     </LinearLayout>
 
     <LinearLayout
@@ -74,27 +62,12 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:fontFamily="@font/ys_display_reg"
-            android:paddingStart="@dimen/button_padding"
-            android:paddingTop="@dimen/settings_padding_top_bot"
-            android:paddingEnd="@dimen/settings_padding_end"
-            android:paddingBottom="@dimen/settings_padding_top_bot"
-            android:text="@string/share_app"
-            android:textColor="@color/black"
-            android:textSize="@dimen/setting_text_size" />
+            style="@style/SettingsTextStyle"
+            android:text="@string/share_app" />
 
         <ImageButton
-            android:layout_width="@dimen/setting_image_size"
-            android:layout_height="@dimen/setting_image_size"
-            android:layout_gravity="center"
-            android:layout_marginStart="@dimen/setting_image_margin_start"
-            android:layout_marginTop="@dimen/setting_margin_top"
-            android:layout_marginEnd="@dimen/setting_margin_end"
-            android:layout_marginBottom="@dimen/setting_margin_bot"
-            android:background="@color/white"
+            android:id="@+id/settings_share_btn"
+            style="@style/SettingsButtonStyle"
             android:contentDescription="@string/share_app"
             android:src="@drawable/share" />
 
@@ -105,32 +78,15 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:fontFamily="@font/ys_display_reg"
-            android:paddingStart="@dimen/button_padding"
-            android:paddingTop="@dimen/settings_padding_top_bot"
-            android:paddingEnd="@dimen/settings_padding_end"
-            android:paddingBottom="@dimen/settings_padding_top_bot"
-            android:text="@string/text_to_support"
-            android:textColor="@color/black"
-            android:textSize="@dimen/setting_text_size" />
+            style="@style/SettingsTextStyle"
+            android:text="@string/text_to_support" />
 
         <ImageButton
-            android:layout_width="@dimen/setting_image_size"
-            android:layout_height="@dimen/setting_image_size"
-            android:layout_gravity="center"
-            android:layout_marginStart="@dimen/setting_image_margin_start"
-            android:layout_marginTop="@dimen/setting_margin_top"
-            android:layout_marginEnd="@dimen/setting_margin_end"
-            android:layout_marginBottom="@dimen/setting_margin_bot"
-            android:background="@color/white"
+            android:id="@+id/settings_support_btn"
+            style="@style/SettingsButtonStyle"
+            android:layout_width="wrap_content"
             android:contentDescription="@string/text_to_support"
-            android:paddingStart="@dimen/setting_support_padding_start"
-            android:paddingTop="3.1dp"
-            android:paddingEnd="@dimen/setting_support_padding_start"
-            android:paddingBottom="2.9dp"
+            android:padding="@dimen/setting_support_padding_start"
             android:src="@drawable/support" />
 
     </LinearLayout>
@@ -140,27 +96,12 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:fontFamily="@font/ys_display_reg"
-            android:paddingStart="@dimen/button_padding"
-            android:paddingTop="@dimen/settings_padding_top_bot"
-            android:paddingEnd="@dimen/settings_padding_end"
-            android:paddingBottom="@dimen/settings_padding_top_bot"
-            android:text="@string/user_agreement"
-            android:textColor="@color/black"
-            android:textSize="@dimen/setting_text_size" />
+            style="@style/SettingsTextStyle"
+            android:text="@string/user_agreement" />
 
         <ImageButton
-            android:layout_width="@dimen/setting_image_size"
-            android:layout_height="@dimen/setting_image_size"
-            android:layout_gravity="center"
-            android:layout_marginStart="@dimen/setting_image_margin_start"
-            android:layout_marginTop="@dimen/setting_margin_top"
-            android:layout_marginEnd="@dimen/setting_margin_end"
-            android:layout_marginBottom="@dimen/setting_margin_bot"
-            android:background="@color/white"
+            android:id="@+id/settings_agreement_btn"
+            style="@style/SettingsButtonStyle"
             android:contentDescription="@string/user_agreement"
             android:src="@drawable/arrow_forward" />
     </LinearLayout>

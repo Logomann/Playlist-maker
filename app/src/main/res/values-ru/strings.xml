@@ -11,4 +11,7 @@
     <string name="press_search_btn">Нажата кнопка Поиск</string>
     <string name="press_media_btn">Нажата кнопка Медиатека</string>
     <string name="press_settings_btn">Нажата кнопка Настройки</string>
+    <string name="email_body_text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="email_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="clear">Очистить</string>
 </resources>
