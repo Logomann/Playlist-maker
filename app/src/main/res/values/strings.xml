@@ -11,5 +11,11 @@
     <string name="press_search_btn">Search button pressed</string>
     <string name="press_media_btn">Media button pressed</string>
     <string name="press_settings_btn">Settings button pressed</string>
+    <string name="practicum_link" translatable="false">https://practicum.yandex.ru/android-developer/</string>
+    <string name="email_body_text">Thanks for the developers for a cool application!</string>
+    <string name="email_subject">The message for the developers of Playlist Maker app</string>
+    <string name="supp_email_address" translatable="false">logomann@gmail.com</string>
+    <string name="practicum_offer_url" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="clear">Clear</string>
 
 </resources>
