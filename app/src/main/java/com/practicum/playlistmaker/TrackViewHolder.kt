@@ -16,11 +16,12 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         nameOfSong.text = model.trackName
         nameOfArtist.text = model.artistName
         trackDuration.text = model.trackTime
+        val cornerRadius = itemView.resources.getDimensionPixelSize(R.dimen.corner_radius)
 
         Glide.with(itemView)
             .load(model.artworkUrl100)
             .fitCenter()
-            .transform(RoundedCorners(2))
+            .transform(RoundedCorners(cornerRadius))
             .placeholder(R.drawable.placeholder)
             .into(songImage)
 
