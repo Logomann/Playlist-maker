@@ -46,10 +46,10 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:layout_marginVertical="10dp"
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
             android:layout_gravity="center"
+            android:layout_marginVertical="10dp"
             android:layout_marginStart="12dp"
             android:contentDescription="@string/search"
             android:src="@drawable/lens"
@@ -61,10 +61,10 @@
             android:layout_marginHorizontal="8dp">
 
             <EditText
-                android:autofillHints=""
                 android:id="@+id/search_edit_field"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:autofillHints=""
                 android:background="@color/search_background"
                 android:focusable="true"
                 android:focusedByDefault="true"
@@ -90,4 +90,12 @@
                 app:tint="@color/main_text_color" />
         </FrameLayout>
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/song_recycle_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
 </LinearLayout>

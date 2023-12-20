@@ -21,4 +21,7 @@
     <dimen name="setting_switch_margin_top">12dp</dimen>
     <dimen name="setting_support_padding_start">4dp</dimen>
     <dimen name="setting_image_margin_start">8dp</dimen>
+    <dimen name="search_song_image">24dp</dimen>
+    <dimen name="song_dot_size">13dp</dimen>
+    <dimen name="song_image_size">45dp</dimen>
 </resources>
