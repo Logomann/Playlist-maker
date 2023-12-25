@@ -9,6 +9,8 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class SearchActivity : AppCompatActivity() {
     companion object {
@@ -58,6 +60,44 @@ class SearchActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
         }
         editField.addTextChangedListener(editTextWatcher)
+
+        val listOfTracks: ArrayList<Track> = arrayListOf(
+            Track(
+                getString(R.string.track_1_name),
+                getString(R.string.track_1_artist),
+                getString(R.string.track_1_time),
+                getString(R.string.track_1_url)
+            ),
+            Track(
+                getString(R.string.track_2_name),
+                getString(R.string.track_2_atrist),
+                getString(R.string.track_2_time),
+                getString(R.string.track_2_url)
+            ),
+            Track(
+                getString(R.string.track_3_name),
+                getString(R.string.track_3_artist),
+                getString(R.string.track_3_time),
+                getString(R.string.track_3_url)
+            ),
+            Track(
+                getString(R.string.track_4_name),
+                getString(R.string.track_4_artist),
+                getString(R.string.track_4_time),
+                getString(R.string.track_4_url)
+            ),
+            Track(
+                getString(R.string.track_5_name),
+                getString(R.string.track_5_artist),
+                getString(R.string.track_5_time),
+                getString(R.string.track_5_url)
+            )
+        )
+        val songRecyclerView = findViewById<RecyclerView>(R.id.song_recycle_view)
+        songRecyclerView.layoutManager = LinearLayoutManager(this)
+        val trackAdapter = TrackAdapter(listOfTracks)
+        songRecyclerView.adapter = trackAdapter
+
     }
 
 }
