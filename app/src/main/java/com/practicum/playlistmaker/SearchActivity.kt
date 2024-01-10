@@ -36,7 +36,7 @@ class SearchActivity : AppCompatActivity() {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    private val imdbService = retrofit.create(ITunesApi::class.java)
+    private val iTunesService = retrofit.create(ITunesApi::class.java)
 
     private lateinit var editField: EditText
     private lateinit var placeholderImage: ImageView
@@ -110,7 +110,7 @@ class SearchActivity : AppCompatActivity() {
         val request = query.ifEmpty {
             editField.text.toString()
         }
-        imdbService.findTrack(request).enqueue(object : Callback<TrackResponse> {
+        iTunesService.findTrack(request).enqueue(object : Callback<TrackResponse> {
             @SuppressLint("NotifyDataSetChanged")
             override fun onResponse(
                 call: Call<TrackResponse>,
