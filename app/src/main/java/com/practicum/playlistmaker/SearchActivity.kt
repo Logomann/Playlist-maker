@@ -1,16 +1,26 @@
 package com.practicum.playlistmaker
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
     companion object {
@@ -18,7 +28,22 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private var editText = ""
+    private val iTunesBaseURL = "https://itunes.apple.com"
+    private val listOfTracks = ArrayList<Track>()
+    private val adapter = TrackAdapter(listOfTracks)
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(iTunesBaseURL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    private val imdbService = retrofit.create(ITunesApi::class.java)
+
     private lateinit var editField: EditText
+    private lateinit var placeholderImage: ImageView
+    private lateinit var placeholderImageNoInternet: ImageView
+    private lateinit var placeholderText: TextView
+    private lateinit var refreshButton: Button
+    private lateinit var lastQuery: String
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(EDIT_FIELD, editText)
@@ -30,6 +55,7 @@ class SearchActivity : AppCompatActivity() {
         editField.setText(editText)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -39,9 +65,15 @@ class SearchActivity : AppCompatActivity() {
             this.finish()
         }
         editField = findViewById(R.id.search_edit_field)
+        placeholderImage = findViewById(R.id.search_placeholder_image)
+        placeholderImageNoInternet = findViewById(R.id.search_placeholder_image_no_internet)
+        placeholderText = findViewById(R.id.search_placeholder_text)
+        refreshButton = findViewById(R.id.refresh_button)
         val clearBtn = findViewById<ImageButton>(R.id.search_clear_btn)
         clearBtn.setOnClickListener {
             editField.text.clear()
+            listOfTracks.clear()
+            adapter.notifyDataSetChanged()
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(editField.windowToken, 0)
@@ -61,43 +93,66 @@ class SearchActivity : AppCompatActivity() {
         }
         editField.addTextChangedListener(editTextWatcher)
 
-        val listOfTracks: ArrayList<Track> = arrayListOf(
-            Track(
-                getString(R.string.track_1_name),
-                getString(R.string.track_1_artist),
-                getString(R.string.track_1_time),
-                getString(R.string.track_1_url)
-            ),
-            Track(
-                getString(R.string.track_2_name),
-                getString(R.string.track_2_atrist),
-                getString(R.string.track_2_time),
-                getString(R.string.track_2_url)
-            ),
-            Track(
-                getString(R.string.track_3_name),
-                getString(R.string.track_3_artist),
-                getString(R.string.track_3_time),
-                getString(R.string.track_3_url)
-            ),
-            Track(
-                getString(R.string.track_4_name),
-                getString(R.string.track_4_artist),
-                getString(R.string.track_4_time),
-                getString(R.string.track_4_url)
-            ),
-            Track(
-                getString(R.string.track_5_name),
-                getString(R.string.track_5_artist),
-                getString(R.string.track_5_time),
-                getString(R.string.track_5_url)
-            )
-        )
         val songRecyclerView = findViewById<RecyclerView>(R.id.song_recycle_view)
         songRecyclerView.layoutManager = LinearLayoutManager(this)
-        val trackAdapter = TrackAdapter(listOfTracks)
-        songRecyclerView.adapter = trackAdapter
+        songRecyclerView.adapter = adapter
 
+        editField.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                search("")
+            }
+            false
+        }
+
+    }
+
+    private fun search(query: String) {
+        val request = query.ifEmpty {
+            editField.text.toString()
+        }
+        imdbService.findTrack(request).enqueue(object : Callback<TrackResponse> {
+            @SuppressLint("NotifyDataSetChanged")
+            override fun onResponse(
+                call: Call<TrackResponse>,
+                response: Response<TrackResponse>
+            ) {
+                listOfTracks.clear()
+                placeholderImage.visibility = View.GONE
+                placeholderText.visibility = View.GONE
+                placeholderImageNoInternet.visibility = View.GONE
+                refreshButton.visibility = View.GONE
+                if (response.code() == 200) {
+                    if (response.body()?.results?.isNotEmpty() == true) {
+                        listOfTracks.addAll(response.body()?.results!!)
+                        adapter.notifyDataSetChanged()
+                    } else {
+                        placeholderText.text = getString(R.string.search_placeholder_text)
+                        placeholderImage.visibility = View.VISIBLE
+                        placeholderText.visibility = View.VISIBLE
+                    }
+                } else {
+                    setPlaceholderNoInternet()
+                }
+            }
+
+            override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                setPlaceholderNoInternet()
+            }
+
+        })
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun setPlaceholderNoInternet() {
+        lastQuery = editField.text.toString()
+        listOfTracks.clear()
+        adapter.notifyDataSetChanged()
+        placeholderImage.visibility = View.GONE
+        placeholderText.text = getString(R.string.search_placeholder_text_no_internet)
+        placeholderImageNoInternet.visibility = View.VISIBLE
+        placeholderText.visibility = View.VISIBLE
+        refreshButton.visibility = View.VISIBLE
+        refreshButton.setOnClickListener { search(lastQuery) }
     }
 
 }
