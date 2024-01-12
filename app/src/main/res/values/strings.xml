@@ -38,5 +38,8 @@
     <string name="track_5_time" translatable="false">5:03</string>
     <string name="track_5_url" translatable="false">https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg</string>
     <string name="song_description">Song Description</string>
+    <string name="search_placeholder_text">Nothing found</string>
+    <string name="search_placeholder_text_no_internet">Communication problems \n \n Download failed. Check your internet connection</string>
+    <string name="refresh_button">Refresh</string>
 
 </resources>

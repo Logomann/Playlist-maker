@@ -15,4 +15,7 @@
     <string name="email_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="clear">Очистить</string>
     <string name="song_description">Описание песни</string>
+    <string name="search_placeholder_text">Ничего не нашлось</string>
+    <string name="search_placeholder_text_no_internet">Проблемы со связью \n \n Загрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="refresh_button">Обновить</string>
 </resources>
