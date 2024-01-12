@@ -14,6 +14,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
@@ -53,6 +54,7 @@ class SearchActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         editText = savedInstanceState.getString(EDIT_FIELD, "")
         editField.setText(editText)
+        lastQuery = editText
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -107,28 +109,28 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun search(query: String) {
-        val request = query.ifEmpty {
+        iTunesService.findTrack(query.ifEmpty {
             editField.text.toString()
-        }
-        iTunesService.findTrack(request).enqueue(object : Callback<TrackResponse> {
+        }).enqueue(object : Callback<TrackResponse> {
             @SuppressLint("NotifyDataSetChanged")
             override fun onResponse(
                 call: Call<TrackResponse>,
                 response: Response<TrackResponse>
             ) {
+                val responseText = response.body()?.results
                 listOfTracks.clear()
-                placeholderImage.visibility = View.GONE
-                placeholderText.visibility = View.GONE
-                placeholderImageNoInternet.visibility = View.GONE
-                refreshButton.visibility = View.GONE
-                if (response.code() == 200) {
-                    if (response.body()?.results?.isNotEmpty() == true) {
-                        listOfTracks.addAll(response.body()?.results!!)
+                placeholderImage.isVisible = false
+                placeholderText.isVisible = false
+                placeholderImageNoInternet.isVisible = false
+                refreshButton.isVisible = false
+                if (response.isSuccessful) {
+                    if (!responseText.isNullOrEmpty()) {
+                        listOfTracks.addAll(responseText)
                         adapter.notifyDataSetChanged()
                     } else {
                         placeholderText.text = getString(R.string.search_placeholder_text)
-                        placeholderImage.visibility = View.VISIBLE
-                        placeholderText.visibility = View.VISIBLE
+                        placeholderImage.isVisible = true
+                        placeholderText.isVisible = true
                     }
                 } else {
                     setPlaceholderNoInternet()
@@ -144,14 +146,13 @@ class SearchActivity : AppCompatActivity() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun setPlaceholderNoInternet() {
-        lastQuery = editField.text.toString()
         listOfTracks.clear()
         adapter.notifyDataSetChanged()
-        placeholderImage.visibility = View.GONE
+        placeholderImage.isVisible = false
         placeholderText.text = getString(R.string.search_placeholder_text_no_internet)
-        placeholderImageNoInternet.visibility = View.VISIBLE
-        placeholderText.visibility = View.VISIBLE
-        refreshButton.visibility = View.VISIBLE
+        placeholderImageNoInternet.isVisible = true
+        placeholderText.isVisible = true
+        refreshButton.isVisible = true
         refreshButton.setOnClickListener { search(lastQuery) }
     }
 
