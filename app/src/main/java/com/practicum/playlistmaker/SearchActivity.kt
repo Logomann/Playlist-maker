@@ -109,7 +109,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun search(query: String) {
-        iTunesService.findTrack(query.ifEmpty {
+        lastQuery = query
+        iTunesService.findTrack(lastQuery.ifEmpty {
             editField.text.toString()
         }).enqueue(object : Callback<TrackResponse> {
             @SuppressLint("NotifyDataSetChanged")
@@ -153,7 +154,9 @@ class SearchActivity : AppCompatActivity() {
         placeholderImageNoInternet.isVisible = true
         placeholderText.isVisible = true
         refreshButton.isVisible = true
-        refreshButton.setOnClickListener { search(lastQuery) }
+        refreshButton.setOnClickListener { search(lastQuery.ifEmpty {
+            editField.text.toString()
+        }) }
     }
 
 }
