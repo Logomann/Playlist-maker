@@ -6,8 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.SwitchCompat
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -19,22 +18,12 @@ class SettingsActivity : AppCompatActivity() {
         val shareBtn = findViewById<ImageButton>(R.id.settings_share_btn)
         val supportBtn = findViewById<ImageButton>(R.id.settings_support_btn)
         val agreementBtn = findViewById<ImageButton>(R.id.settings_agreement_btn)
-        val switchBtn = findViewById<SwitchCompat>(R.id.settings_switch)
-        when (AppCompatDelegate.getDefaultNightMode()) {
-            AppCompatDelegate.MODE_NIGHT_NO -> {
-                switchBtn.isChecked = false
-            }
+        val switchBtn = findViewById<SwitchMaterial>(R.id.settings_switch)
+        val sharedPreferences = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
 
-            AppCompatDelegate.MODE_NIGHT_YES -> {
-                switchBtn.isChecked = true
-            }
-        }
+        switchBtn.isChecked = sharedPreferences.getBoolean(THEME_KEY, false)
         switchBtn.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
+            (applicationContext as App).switchTheme(isChecked)
         }
         arrowBackBtn.setOnClickListener {
             this.finish()

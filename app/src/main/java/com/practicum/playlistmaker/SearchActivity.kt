@@ -2,17 +2,18 @@ package com.practicum.playlistmaker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,15 +37,17 @@ class SearchActivity : AppCompatActivity() {
         .baseUrl(iTunesBaseURL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
+    private lateinit var preferences: SharedPreferences
 
     private val iTunesService = retrofit.create(ITunesApi::class.java)
-
+    private var lastQuery = ""
     private lateinit var editField: EditText
     private lateinit var placeholderImage: ImageView
     private lateinit var placeholderImageNoInternet: ImageView
     private lateinit var placeholderText: TextView
     private lateinit var refreshButton: Button
-    private lateinit var lastQuery: String
+    private lateinit var searchHistory: LinearLayout
+    private lateinit var clearHistoryButton: Button
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(EDIT_FIELD, editText)
@@ -71,7 +74,12 @@ class SearchActivity : AppCompatActivity() {
         placeholderImageNoInternet = findViewById(R.id.search_placeholder_image_no_internet)
         placeholderText = findViewById(R.id.search_placeholder_text)
         refreshButton = findViewById(R.id.refresh_button)
+        searchHistory = findViewById(R.id.search_history_group)
+        clearHistoryButton = findViewById(R.id.search_clean_history)
+        preferences = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
         val clearBtn = findViewById<ImageButton>(R.id.search_clear_btn)
+        val history = SearchHistory(preferences).read()
+
         clearBtn.setOnClickListener {
             editField.text.clear()
             listOfTracks.clear()
@@ -84,14 +92,15 @@ class SearchActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearBtn.visibility = View.VISIBLE
+                clearBtn.isVisible = true
                 editText = editField.text.toString()
-                if (editField.text.isEmpty()) {
-                    clearBtn.visibility = View.GONE
+                if (s?.isEmpty() == true) {
+                    clearBtn.isVisible = false
                 }
             }
 
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) {
+            }
         }
         editField.addTextChangedListener(editTextWatcher)
 
@@ -105,6 +114,13 @@ class SearchActivity : AppCompatActivity() {
             }
             false
         }
+        editField.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && history.isNotEmpty()) {
+                hidePlaceholder()
+                readTrackHistory()
+            }
+        }
+
 
     }
 
@@ -120,9 +136,8 @@ class SearchActivity : AppCompatActivity() {
             ) {
                 val responseText = response.body()?.results
                 listOfTracks.clear()
-                placeholderImage.isVisible = false
-                placeholderText.isVisible = false
-                placeholderImageNoInternet.isVisible = false
+                searchHistory.isVisible = false
+                hidePlaceholder()
                 refreshButton.isVisible = false
                 if (response.isSuccessful) {
                     if (!responseText.isNullOrEmpty()) {
@@ -154,9 +169,32 @@ class SearchActivity : AppCompatActivity() {
         placeholderImageNoInternet.isVisible = true
         placeholderText.isVisible = true
         refreshButton.isVisible = true
-        refreshButton.setOnClickListener { search(lastQuery.ifEmpty {
-            editField.text.toString()
-        }) }
+        refreshButton.setOnClickListener {
+            search(lastQuery.ifEmpty {
+                editField.text.toString()
+            })
+        }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    private fun readTrackHistory() {
+        searchHistory.isVisible = true
+        val historyTrackRecyclerView = findViewById<RecyclerView>(R.id.search_recycler_history)
+        historyTrackRecyclerView.layoutManager = LinearLayoutManager(this)
+        val history = SearchHistory(preferences)
+        val listOfTracksHistory = history.read()
+        val historyAdapter = TrackHistoryAdapter(listOfTracksHistory)
+        historyTrackRecyclerView.adapter = historyAdapter
+        clearHistoryButton.setOnClickListener {
+            history.clear()
+            historyAdapter.notifyDataSetChanged()
+            searchHistory.isVisible = false
+        }
+    }
+
+    private fun hidePlaceholder() {
+        placeholderImage.isVisible = false
+        placeholderText.isVisible = false
+        placeholderImageNoInternet.isVisible = false
+    }
 }

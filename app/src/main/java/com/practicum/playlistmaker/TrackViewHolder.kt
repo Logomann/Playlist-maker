@@ -29,6 +29,5 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .transform(RoundedCorners(cornerRadius))
             .placeholder(R.drawable.placeholder)
             .into(songImage)
-
     }
 }

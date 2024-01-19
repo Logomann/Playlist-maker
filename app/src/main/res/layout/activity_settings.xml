@@ -46,7 +46,7 @@
             style="@style/SettingsTextStyle"
             android:text="@string/dark_mode" />
 
-        <androidx.appcompat.widget.SwitchCompat
+        <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/settings_switch"
             android:layout_width="56dp"
             android:layout_height="40dp"
