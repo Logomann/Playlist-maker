@@ -101,6 +101,7 @@
         android:layout_height="@dimen/search_placeholder_image_size"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/search_placeholder_image_margin_top"
+        android:importantForAccessibility="no"
         android:visibility="gone"
         tools:src="@drawable/search_placeholder" />
 
@@ -111,6 +112,7 @@
         android:layout_height="@dimen/search_placeholder_image_size"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/search_placeholder_image_margin_top"
+        android:importantForAccessibility="no"
         android:visibility="gone"
         tools:src="@drawable/search_placeholder_no_internet" />
 
@@ -139,11 +141,55 @@
         android:textAllCaps="false"
         android:visibility="gone" />
 
+    <LinearLayout
+        android:id="@+id/search_history_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/ys_display_medium"
+            android:letterSpacing="0"
+            android:text="@string/you_were_looking_for"
+            android:textColor="@color/settings_text_color"
+            android:textSize="19sp"
+            android:layout_weight="0"
+            tools:text="Вы искали" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_recycler_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <Button
+            android:id="@+id/search_clean_history"
+            style="@style/RefreshButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:layout_weight="0"
+            android:textAllCaps="false"
+            android:text="@string/clear_history"
+            tools:text="Очистить историю" />
+
+    </LinearLayout>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/song_recycle_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
 
 </LinearLayout>
