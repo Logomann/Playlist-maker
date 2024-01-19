@@ -85,4 +85,8 @@
         <item name="android:textSize">14sp</item>
         <item name="android:letterSpacing">0</item>
     </style>
+    <style name="DarkThemeSwitch" parent="Theme.AppCompat.Light">
+
+        <item name="colorControlActivated">@color/switch_color_activated</item>
+    </style>
 </resources>

@@ -77,10 +77,12 @@ class SearchActivity : AppCompatActivity() {
         searchHistory = findViewById(R.id.search_history_group)
         clearHistoryButton = findViewById(R.id.search_clean_history)
         preferences = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
+        editField.isFocusableInTouchMode = true
         val clearBtn = findViewById<ImageButton>(R.id.search_clear_btn)
         val history = SearchHistory(preferences).read()
 
         clearBtn.setOnClickListener {
+
             editField.text.clear()
             listOfTracks.clear()
             adapter.notifyDataSetChanged()
@@ -96,6 +98,10 @@ class SearchActivity : AppCompatActivity() {
                 editText = editField.text.toString()
                 if (s?.isEmpty() == true) {
                     clearBtn.isVisible = false
+                    if (editField.hasFocus() && history.isNotEmpty()) {
+                        hidePlaceholder()
+                        readTrackHistory()
+                    }
                 }
             }
 
@@ -196,5 +202,6 @@ class SearchActivity : AppCompatActivity() {
         placeholderImage.isVisible = false
         placeholderText.isVisible = false
         placeholderImageNoInternet.isVisible = false
+        refreshButton.isVisible = false
     }
 }
