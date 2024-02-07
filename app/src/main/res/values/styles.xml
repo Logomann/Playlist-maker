@@ -85,8 +85,24 @@
         <item name="android:textSize">14sp</item>
         <item name="android:letterSpacing">0</item>
     </style>
-    <style name="DarkThemeSwitch" parent="Theme.AppCompat.Light">
 
+    <style name="DarkThemeSwitch" parent="Theme.AppCompat.Light">
         <item name="colorControlActivated">@color/switch_color_activated</item>
+    </style>
+
+    <style name="AudioPlayerButtonStyle">
+        <item name="android:background">@color/settings_background</item>
+    </style>
+
+    <style name="AudioPlayerDataStyle">
+        <item name="android:fontFamily">@font/ys_display_reg</item>
+        <item name="android:textColor">@color/settings_text_color</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="AudioPlayerTV">
+        <item name="android:fontFamily">@font/ys_display_reg</item>
+        <item name="android:textColor">@color/audio_player_text</item>
+        <item name="android:textSize">13sp</item>
     </style>
 </resources>

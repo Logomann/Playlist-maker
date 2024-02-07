@@ -101,6 +101,8 @@ class SearchActivity : AppCompatActivity() {
                     if (editField.hasFocus() && history.isNotEmpty()) {
                         hidePlaceholder()
                         readTrackHistory()
+                    } else {
+                        hideHistory()
                     }
                 }
             }
@@ -126,15 +128,13 @@ class SearchActivity : AppCompatActivity() {
                 readTrackHistory()
             }
         }
-
-
     }
 
     private fun search(query: String) {
-        lastQuery = query
-        iTunesService.findTrack(lastQuery.ifEmpty {
+        lastQuery = query.ifEmpty {
             editField.text.toString()
-        }).enqueue(object : Callback<TrackResponse> {
+        }
+        iTunesService.findTrack(lastQuery).enqueue(object : Callback<TrackResponse> {
             @SuppressLint("NotifyDataSetChanged")
             override fun onResponse(
                 call: Call<TrackResponse>,
@@ -142,9 +142,8 @@ class SearchActivity : AppCompatActivity() {
             ) {
                 val responseText = response.body()?.results
                 listOfTracks.clear()
-                searchHistory.isVisible = false
+                hideHistory()
                 hidePlaceholder()
-                refreshButton.isVisible = false
                 if (response.isSuccessful) {
                     if (!responseText.isNullOrEmpty()) {
                         listOfTracks.addAll(responseText)
@@ -155,11 +154,13 @@ class SearchActivity : AppCompatActivity() {
                         placeholderText.isVisible = true
                     }
                 } else {
+                    hideHistory()
                     setPlaceholderNoInternet()
                 }
             }
 
             override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                hideHistory()
                 setPlaceholderNoInternet()
             }
 
@@ -202,6 +203,11 @@ class SearchActivity : AppCompatActivity() {
         placeholderImage.isVisible = false
         placeholderText.isVisible = false
         placeholderImageNoInternet.isVisible = false
+        refreshButton.isVisible = false
+    }
+
+    private fun hideHistory() {
+        searchHistory.isVisible = false
         refreshButton.isVisible = false
     }
 }

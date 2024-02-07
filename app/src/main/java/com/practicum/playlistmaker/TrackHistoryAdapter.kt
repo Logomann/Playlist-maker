@@ -1,8 +1,11 @@
 package com.practicum.playlistmaker
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 
 class TrackHistoryAdapter(
     private val tracks: List<Track>
@@ -16,6 +19,14 @@ class TrackHistoryAdapter(
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(tracks[position])
+        holder.itemView.setOnClickListener {
+            val context = holder.itemView.context as AppCompatActivity
+            val json = Gson().toJson(tracks[position])
+            val intent = Intent(context, AudioPlayerActivity::class.java).apply {
+                putExtra("track", json)
+            }
+            context.startActivity(intent)
+        }
     }
 
 }
