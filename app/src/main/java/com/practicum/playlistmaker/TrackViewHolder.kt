@@ -12,7 +12,7 @@ import java.util.Locale
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val nameOfSong: TextView = itemView.findViewById(R.id.name_of_song)
     private val nameOfArtist: TextView = itemView.findViewById(R.id.name_of_artist)
-    private val trackDuration: TextView = itemView.findViewById(R.id.track_duration)
+    private val trackDuration: TextView = itemView.findViewById(R.id.playing_time)
     private val songImage: ImageView = itemView.findViewById(R.id.song_image)
     fun bind(model: Track) {
         nameOfSong.text = model.trackName
@@ -29,6 +29,5 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .transform(RoundedCorners(cornerRadius))
             .placeholder(R.drawable.placeholder)
             .into(songImage)
-
     }
 }

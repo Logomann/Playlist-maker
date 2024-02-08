@@ -30,15 +30,15 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="bottom"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/name_of_artist"
                 style="@style/ArtistAndTimeStyle"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
@@ -48,13 +48,15 @@
             <ImageView
                 android:layout_width="@dimen/song_dot_size"
                 android:layout_height="@dimen/song_dot_size"
+                android:layout_weight="0"
                 android:src="@drawable/dot_image" />
 
             <TextView
-                android:id="@+id/track_duration"
+                android:id="@+id/playing_time"
                 style="@style/ArtistAndTimeStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
                 tools:text="@string/track_1_time" />
         </LinearLayout>
     </LinearLayout>
