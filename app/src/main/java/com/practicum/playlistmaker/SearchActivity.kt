@@ -2,6 +2,7 @@ package com.practicum.playlistmaker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -18,6 +19,7 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,7 +34,9 @@ class SearchActivity : AppCompatActivity() {
     private var editText = ""
     private val iTunesBaseURL = "https://itunes.apple.com"
     private val listOfTracks = ArrayList<Track>()
-    private val adapter = TrackAdapter(listOfTracks)
+    private val adapter = TrackAdapter(listOfTracks) {
+        setOnItemAction(it)
+    }
     private val retrofit = Retrofit.Builder()
         .baseUrl(iTunesBaseURL)
         .addConverterFactory(GsonConverterFactory.create())
@@ -130,6 +134,13 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    private fun setOnItemAction(track: Track) {
+        val json = Gson().toJson(track)
+        val intent = Intent(this, AudioPlayerActivity::class.java)
+        intent.putExtra(TRACK, json)
+        startActivity(intent)
+    }
+
     private fun search(query: String) {
         lastQuery = query.ifEmpty {
             editField.text.toString()
@@ -190,7 +201,9 @@ class SearchActivity : AppCompatActivity() {
         historyTrackRecyclerView.layoutManager = LinearLayoutManager(this)
         val history = SearchHistory(preferences)
         val listOfTracksHistory = history.read()
-        val historyAdapter = TrackHistoryAdapter(listOfTracksHistory)
+        val historyAdapter = TrackHistoryAdapter(listOfTracksHistory) {
+            setOnItemAction(it)
+        }
         historyTrackRecyclerView.adapter = historyAdapter
         clearHistoryButton.setOnClickListener {
             history.clear()

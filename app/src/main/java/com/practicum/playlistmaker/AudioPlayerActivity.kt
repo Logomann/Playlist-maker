@@ -23,7 +23,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         trackCover = findViewById(R.id.track_cover)
         val bckBtn = findViewById<ImageButton>(R.id.audio_player_arrow)
         bckBtn.setOnClickListener {
-            this.finish()
+            finish()
         }
         val trackFromJson = intent.getStringExtra("track")
         val track = Gson().fromJson(trackFromJson, Track::class.java)
