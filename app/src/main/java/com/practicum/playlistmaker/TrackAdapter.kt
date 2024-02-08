@@ -2,7 +2,6 @@ package com.practicum.playlistmaker
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 
 
@@ -23,12 +22,6 @@ class TrackAdapter(
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(tracks[position])
         holder.itemView.setOnClickListener {
-            val preferences = holder.itemView.context.getSharedPreferences(
-                PREFERENCES,
-                AppCompatActivity.MODE_PRIVATE
-            )
-            val history = SearchHistory(preferences)
-            history.addTrack(tracks[position])
             onClickItem(tracks[position])
         }
     }

@@ -35,7 +35,7 @@ class SearchActivity : AppCompatActivity() {
     private val iTunesBaseURL = "https://itunes.apple.com"
     private val listOfTracks = ArrayList<Track>()
     private val adapter = TrackAdapter(listOfTracks) {
-        setOnItemAction(it)
+        setOnItemAction(it, true)
     }
     private val retrofit = Retrofit.Builder()
         .baseUrl(iTunesBaseURL)
@@ -134,7 +134,12 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun setOnItemAction(track: Track) {
+    private fun setOnItemAction(track: Track, isNotHistory: Boolean) {
+        if (isNotHistory) {
+            val preferences = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
+            val history = SearchHistory(preferences)
+            history.addTrack(track)
+        }
         val json = Gson().toJson(track)
         val intent = Intent(this, AudioPlayerActivity::class.java)
         intent.putExtra(TRACK, json)
@@ -202,7 +207,7 @@ class SearchActivity : AppCompatActivity() {
         val history = SearchHistory(preferences)
         val listOfTracksHistory = history.read()
         val historyAdapter = TrackHistoryAdapter(listOfTracksHistory) {
-            setOnItemAction(it)
+            setOnItemAction(it, false)
         }
         historyTrackRecyclerView.adapter = historyAdapter
         clearHistoryButton.setOnClickListener {
