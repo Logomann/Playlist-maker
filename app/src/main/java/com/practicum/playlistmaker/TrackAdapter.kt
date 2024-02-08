@@ -5,11 +5,15 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 
+
 class TrackAdapter(
-    private val tracks: List<Track>
+    private val tracks: List<Track>, private val onClickItem: (Track) -> Unit
 ) : RecyclerView.Adapter<TrackViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.track_view, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(
+            R.layout.track_view,
+            parent, false
+        )
         return TrackViewHolder(view)
     }
 
@@ -25,7 +29,7 @@ class TrackAdapter(
             )
             val history = SearchHistory(preferences)
             history.addTrack(tracks[position])
+            onClickItem(tracks[position])
         }
     }
-
 }

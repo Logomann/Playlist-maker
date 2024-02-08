@@ -43,5 +43,11 @@
     <string name="refresh_button">Refresh</string>
     <string name="you_were_looking_for">You were looking for</string>
     <string name="clear_history">Clear history</string>
+    <string name="track_duration">Duration</string>
+    <string name="album">Album</string>
+    <string name="year">Year</string>
+    <string name="genre">Genre</string>
+    <string name="country">Country</string>
+    <string name="track_playing_placeholder" translatable="false">0:30</string>
 
 </resources>
