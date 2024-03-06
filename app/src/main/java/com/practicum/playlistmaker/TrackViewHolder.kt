@@ -17,10 +17,15 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(model: Track) {
         nameOfSong.text = model.trackName
         nameOfArtist.text = model.artistName
-        trackDuration.text = SimpleDateFormat(
-            "mm:ss",
-            Locale.getDefault()
-        ).format(model.trackTimeMillis.toFloat())
+        if (!model.trackTimeMillis.isNullOrEmpty()) {
+            trackDuration.text = SimpleDateFormat(
+                "mm:ss",
+                Locale.getDefault()
+            ).format(model.trackTimeMillis.toFloat())
+        } else {
+            trackDuration.text = itemView.context.getString(R.string.start_time_00)
+        }
+
         val cornerRadius = itemView.resources.getDimensionPixelSize(R.dimen.corner_radius)
 
         Glide.with(itemView)
