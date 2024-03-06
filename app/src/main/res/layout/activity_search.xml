@@ -95,7 +95,7 @@
     </LinearLayout>
 
     <ProgressBar
-        android:id="@+id/search_progress_bar"
+        android:id="@+id/pbTrackSearch"
         android:layout_width="@dimen/_44dp"
         android:layout_height="@dimen/_44dp"
         android:layout_gravity="center_horizontal"

@@ -20,17 +20,13 @@ import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
     companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-        private const val PLAYING_TIME_UPDATE_DELAY = 300L
+        private const val PLAYING_TIME_UPDATE_DELAY_MILLIS = 300L
     }
 
-    private var playerState = STATE_DEFAULT
-    private lateinit var trackCover: ImageView
-    private lateinit var playButton: ImageButton
-    private lateinit var playingTime: TextView
+    private var playerState = AudioPlayerState.DEFAULT
+    private var trackCover: ImageView? = null
+    private var playButton: ImageButton? = null
+    private var playingTime: TextView? = null
     private var url: String? = ""
     private val handler = Handler(Looper.getMainLooper())
     private val timeOfPlayingRunnable = Runnable { getCurrentPosition() }
@@ -44,8 +40,8 @@ class AudioPlayerActivity : AppCompatActivity() {
             finish()
         }
         playButton = findViewById(R.id.track_play_btn)
-        playButton.isEnabled = false
-        playButton.setOnClickListener {
+        playButton?.isEnabled = false
+        playButton?.setOnClickListener {
             playbackControl()
         }
         playingTime = findViewById(R.id.playing_time)
@@ -59,7 +55,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             .fitCenter()
             .transform(RoundedCorners(cornerRadius))
             .placeholder(R.drawable.placeholder)
-            .into(trackCover)
+            .into(trackCover!!)
 
         val trackName = findViewById<TextView>(R.id.song_name)
         trackName.text = track.trackName
@@ -106,13 +102,13 @@ class AudioPlayerActivity : AppCompatActivity() {
             mediaPlayer.setDataSource(url)
             mediaPlayer.prepareAsync()
             mediaPlayer.setOnPreparedListener {
-                playButton.isEnabled = true
-                playerState = STATE_PREPARED
+                playButton?.isEnabled = true
+                playerState = AudioPlayerState.PREPARED
             }
             mediaPlayer.setOnCompletionListener {
-                playerState = STATE_PREPARED
-                playingTime.text = getString(R.string.start_time_00)
-                playButton.setImageResource(R.drawable.track_play_btn)
+                playerState = AudioPlayerState.PREPARED
+                playingTime?.text = getString(R.string.start_time_00)
+                playButton?.setImageResource(R.drawable.track_play_btn)
             }
         }
 
@@ -120,27 +116,29 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private fun startPlayer() {
         mediaPlayer.start()
-        playerState = STATE_PLAYING
-        playButton.setImageResource(R.drawable.pause_button)
+        playerState = AudioPlayerState.PLAYING
+        playButton?.setImageResource(R.drawable.pause_button)
         timeOfPlayingRunnable.run()
     }
 
     private fun pausePlayer() {
         handler.removeCallbacks(timeOfPlayingRunnable)
         mediaPlayer.pause()
-        playerState = STATE_PAUSED
-        playButton.setImageResource(R.drawable.track_play_btn)
+        playerState = AudioPlayerState.PAUSED
+        playButton?.setImageResource(R.drawable.track_play_btn)
     }
 
     private fun playbackControl() {
         when (playerState) {
-            STATE_PLAYING -> {
+            AudioPlayerState.PLAYING -> {
                 pausePlayer()
             }
 
-            STATE_PREPARED, STATE_PAUSED -> {
+            AudioPlayerState.PREPARED, AudioPlayerState.PAUSED -> {
                 startPlayer()
             }
+
+            else -> {}
         }
     }
 
@@ -157,12 +155,12 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     @Synchronized
     private fun getCurrentPosition() {
-        if (playerState == STATE_PLAYING) {
-            playingTime.text = SimpleDateFormat(
+        if (playerState == AudioPlayerState.PLAYING) {
+            playingTime?.text = SimpleDateFormat(
                 "mm:ss",
                 Locale.getDefault()
             ).format(mediaPlayer.currentPosition)
-            handler.postDelayed(timeOfPlayingRunnable, PLAYING_TIME_UPDATE_DELAY)
+            handler.postDelayed(timeOfPlayingRunnable, PLAYING_TIME_UPDATE_DELAY_MILLIS)
         }
     }
 }

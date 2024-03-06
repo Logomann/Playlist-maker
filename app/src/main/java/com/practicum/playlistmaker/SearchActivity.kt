@@ -88,7 +88,7 @@ class SearchActivity : AppCompatActivity() {
         searchHistory = findViewById(R.id.search_history_group)
         clearHistoryButton = findViewById(R.id.search_clean_history)
         preferences = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
-        progressBar = findViewById(R.id.search_progress_bar)
+        progressBar = findViewById(R.id.pbTrackSearch)
         editField.isFocusableInTouchMode = true
         val clearBtn = findViewById<ImageButton>(R.id.search_clear_btn)
         val history = SearchHistory(preferences).read()
