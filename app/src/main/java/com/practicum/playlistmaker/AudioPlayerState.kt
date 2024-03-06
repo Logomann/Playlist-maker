@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker
 
-enum class AudioPlayerState() {
+enum class AudioPlayerState {
     DEFAULT,
     PREPARED,
     PLAYING,
