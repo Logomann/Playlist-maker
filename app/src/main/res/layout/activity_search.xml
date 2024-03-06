@@ -94,6 +94,15 @@
         </FrameLayout>
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/pbTrackSearch"
+        android:layout_width="@dimen/_44dp"
+        android:layout_height="@dimen/_44dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="140dp"
+        android:indeterminateTint="@color/progress_bar_blue"
+        android:visibility="gone" />
+
     <ImageView
         android:id="@+id/search_placeholder_image"
         style="@style/SearchPlaceholderStyle"
