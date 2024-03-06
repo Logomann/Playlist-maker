@@ -49,5 +49,6 @@
     <string name="genre">Genre</string>
     <string name="country">Country</string>
     <string name="track_playing_placeholder" translatable="false">0:30</string>
+    <string name="start_time_00" translatable="false">00:00</string>
 
 </resources>

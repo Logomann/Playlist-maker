@@ -6,15 +6,17 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,6 +31,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class SearchActivity : AppCompatActivity() {
     companion object {
         private const val EDIT_FIELD = "EDIT_FIELD"
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
     private var editText = ""
@@ -42,7 +46,9 @@ class SearchActivity : AppCompatActivity() {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     private lateinit var preferences: SharedPreferences
-
+    private val searchRunnable = Runnable { search("") }
+    private var isClickAllowed = true
+    private val handler = Handler(Looper.getMainLooper())
     private val iTunesService = retrofit.create(ITunesApi::class.java)
     private var lastQuery = ""
     private lateinit var editField: EditText
@@ -52,6 +58,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var refreshButton: Button
     private lateinit var searchHistory: LinearLayout
     private lateinit var clearHistoryButton: Button
+    private lateinit var progressBar: ProgressBar
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(EDIT_FIELD, editText)
@@ -81,6 +88,7 @@ class SearchActivity : AppCompatActivity() {
         searchHistory = findViewById(R.id.search_history_group)
         clearHistoryButton = findViewById(R.id.search_clean_history)
         preferences = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
+        progressBar = findViewById(R.id.search_progress_bar)
         editField.isFocusableInTouchMode = true
         val clearBtn = findViewById<ImageButton>(R.id.search_clear_btn)
         val history = SearchHistory(preferences).read()
@@ -105,10 +113,12 @@ class SearchActivity : AppCompatActivity() {
                     if (editField.hasFocus() && history.isNotEmpty()) {
                         hidePlaceholder()
                         readTrackHistory()
+                        listOfTracks.clear()
                     } else {
                         hideHistory()
                     }
                 }
+                searchDebounce()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -120,12 +130,6 @@ class SearchActivity : AppCompatActivity() {
         songRecyclerView.layoutManager = LinearLayoutManager(this)
         songRecyclerView.adapter = adapter
 
-        editField.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                search("")
-            }
-            false
-        }
         editField.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && history.isNotEmpty()) {
                 hidePlaceholder()
@@ -140,13 +144,36 @@ class SearchActivity : AppCompatActivity() {
             val history = SearchHistory(preferences)
             history.addTrack(track)
         }
-        val json = Gson().toJson(track)
-        val intent = Intent(this, AudioPlayerActivity::class.java)
-        intent.putExtra(TRACK, json)
-        startActivity(intent)
+        if (clickDebounce()) {
+            val json = Gson().toJson(track)
+            val intent = Intent(this, AudioPlayerActivity::class.java)
+            intent.putExtra(TRACK, json)
+            startActivity(intent)
+        }
+
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        if (editField.text.isNotEmpty()) {
+            handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+        }
+    }
+
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 
     private fun search(query: String) {
+        listOfTracks.clear()
+        hideHistory()
+        hidePlaceholder()
+        progressBar.isVisible = true
         lastQuery = query.ifEmpty {
             editField.text.toString()
         }
@@ -156,10 +183,9 @@ class SearchActivity : AppCompatActivity() {
                 call: Call<TrackResponse>,
                 response: Response<TrackResponse>
             ) {
+                progressBar.isVisible = false
                 val responseText = response.body()?.results
-                listOfTracks.clear()
-                hideHistory()
-                hidePlaceholder()
+
                 if (response.isSuccessful) {
                     if (!responseText.isNullOrEmpty()) {
                         listOfTracks.addAll(responseText)
@@ -176,11 +202,12 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                progressBar.isVisible = false
                 hideHistory()
                 setPlaceholderNoInternet()
             }
-
         })
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
