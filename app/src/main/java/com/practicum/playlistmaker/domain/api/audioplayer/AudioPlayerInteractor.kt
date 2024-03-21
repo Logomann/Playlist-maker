@@ -15,8 +15,6 @@ interface AudioPlayerInteractor {
     fun pause()
     fun release()
 
-    fun getState() : Any
-
     fun getCurrentPosition() : String
 
 

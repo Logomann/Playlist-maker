@@ -12,7 +12,6 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.Creator
-import com.practicum.playlistmaker.data.audioplayer.AudioPlayerState
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.TRACK
 import com.practicum.playlistmaker.domain.api.audioplayer.AudioPlayerInteractor
@@ -21,7 +20,7 @@ import com.practicum.playlistmaker.domain.api.audioplayer.AudioPlayerInteractor
 class AudioPlayerActivity : AppCompatActivity() {
     companion object {
         private const val PLAYING_TIME_UPDATE_DELAY_MILLIS = 300L
-    }
+            }
 
 
     private var playButton: ImageButton? = null
@@ -30,6 +29,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     private val timeOfPlayingRunnable = Runnable { getCurrentPosition() }
     private val audioPlayerInteractor = Creator.provideAudioPlayerInteractor()
     private val trackInteractor = Creator.provideTrackImageInteractor()
+    private var playerState = PlayerState.DEFAULT
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_audio_player)
@@ -95,22 +95,25 @@ class AudioPlayerActivity : AppCompatActivity() {
             override fun onComplete() {
                 playingTime?.text = getString(R.string.start_time_00)
                 playButton?.setImageResource(R.drawable.track_play_btn)
+                playerState = PlayerState.PREPARED
+
             }
 
             override fun onPrepared() {
                 playButton?.isEnabled = true
+                playerState = PlayerState.PREPARED
             }
         })
     }
 
 
     private fun playBack() {
-        when (audioPlayerInteractor.getState()) {
-            AudioPlayerState.PLAYING -> {
+        when (playerState) {
+            PlayerState.PLAYING -> {
                 pausePlayer()
             }
 
-            AudioPlayerState.PAUSED, AudioPlayerState.PREPARED -> {
+            PlayerState.PAUSED, PlayerState.PREPARED -> {
                 startPlayer()
             }
 
@@ -120,7 +123,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     @Synchronized
     private fun getCurrentPosition() {
-        if (audioPlayerInteractor.getState() == AudioPlayerState.PLAYING) {
+        if (playerState == PlayerState.PLAYING) {
             playingTime?.text = audioPlayerInteractor.getCurrentPosition()
             handler.postDelayed(timeOfPlayingRunnable, PLAYING_TIME_UPDATE_DELAY_MILLIS)
         }
@@ -128,6 +131,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private fun startPlayer() {
         audioPlayerInteractor.start()
+        playerState = PlayerState.PLAYING
         playButton?.setImageResource(R.drawable.pause_button)
         timeOfPlayingRunnable.run()
     }
@@ -135,7 +139,9 @@ class AudioPlayerActivity : AppCompatActivity() {
     private fun pausePlayer() {
         handler.removeCallbacks(timeOfPlayingRunnable)
         audioPlayerInteractor.pause()
+        playerState = PlayerState.PAUSED
         playButton?.setImageResource(R.drawable.track_play_btn)
+
     }
 
 
@@ -150,4 +156,10 @@ class AudioPlayerActivity : AppCompatActivity() {
         audioPlayerInteractor.release()
     }
 
+}
+enum class PlayerState {
+    DEFAULT,
+    PREPARED,
+    PLAYING,
+    PAUSED
 }

@@ -10,6 +10,7 @@ import java.util.Locale
 class AudioPlayerInteractorImpl(private val repository: AudioPlayerRepository) :
     AudioPlayerInteractor {
 
+    private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
 
     override fun execute(url: String?, playerCallback: AudioPlayerInteractor.AudioPlayerCallback) {
         if (!url.isNullOrEmpty()) {
@@ -26,9 +27,6 @@ class AudioPlayerInteractorImpl(private val repository: AudioPlayerRepository) :
 
         }
     }
-
-
-
     override fun start() {
         repository.start()
     }
@@ -40,15 +38,8 @@ class AudioPlayerInteractorImpl(private val repository: AudioPlayerRepository) :
     override fun release() {
         repository.release()
     }
-
-    override fun getState(): Any {
-        return repository.getState()
-    }
-
     override fun getCurrentPosition(): String {
-        return SimpleDateFormat(
-            "mm:ss", Locale.getDefault()
-        ).format(repository.getCurrentPosition())
+        return dateFormat.format(repository.getCurrentPosition())
     }
 
 }

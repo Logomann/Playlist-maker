@@ -14,8 +14,6 @@ interface AudioPlayerRepository {
     fun start()
     fun pause()
     fun release()
-
-    fun getState() : Any
     fun getCurrentPosition() : Int
 
 

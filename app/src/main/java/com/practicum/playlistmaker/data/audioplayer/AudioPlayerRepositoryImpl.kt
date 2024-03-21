@@ -37,10 +37,6 @@ class AudioPlayerRepositoryImpl : AudioPlayerRepository {
         mediaPlayer.release()
     }
 
-    override fun getState(): AudioPlayerState {
-        return playerState
-    }
-
     override fun getCurrentPosition(): Int {
         return mediaPlayer.currentPosition
     }
