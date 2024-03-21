@@ -3,6 +3,7 @@ package com.practicum.playlistmaker
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.practicum.playlistmaker.domain.models.Track
 
 
 class SearchHistory(private val preferences: SharedPreferences) {

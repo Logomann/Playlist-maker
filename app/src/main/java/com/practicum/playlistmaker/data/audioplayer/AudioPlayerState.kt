@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.data.audioplayer
 
 enum class AudioPlayerState {
     DEFAULT,

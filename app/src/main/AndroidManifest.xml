@@ -33,7 +33,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AudioPlayerActivity"
+        <activity android:name=".presentation.ui.audioplayer.AudioPlayerActivity"
             android:exported="false"/>
 
 
