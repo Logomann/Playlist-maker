@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.domain.impl.audioplayer
 
 
-import com.practicum.playlistmaker.data.audioplayer.AudioPlayerState
 import com.practicum.playlistmaker.domain.api.audioplayer.AudioPlayerInteractor
 import com.practicum.playlistmaker.domain.api.audioplayer.AudioPlayerRepository
 import java.text.SimpleDateFormat
