@@ -1,6 +1,5 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.presentation.ui.audioplayer
 
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,50 +11,51 @@ import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.google.gson.Gson
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
+import com.practicum.playlistmaker.Creator
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.TRACK
+import com.practicum.playlistmaker.domain.api.audioplayer.AudioPlayerInteractor
+
 
 class AudioPlayerActivity : AppCompatActivity() {
     companion object {
         private const val PLAYING_TIME_UPDATE_DELAY_MILLIS = 300L
-    }
+            }
 
-    private var playerState = AudioPlayerState.DEFAULT
-    private var trackCover: ImageView? = null
+
     private var playButton: ImageButton? = null
     private var playingTime: TextView? = null
-    private var url: String? = ""
     private val handler = Handler(Looper.getMainLooper())
     private val timeOfPlayingRunnable = Runnable { getCurrentPosition() }
-    private var mediaPlayer = MediaPlayer()
+    private val audioPlayerInteractor = Creator.provideAudioPlayerInteractor()
+    private val trackInteractor = Creator.provideTrackImageInteractor()
+    private var playerState = PlayerState.DEFAULT
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_audio_player)
-        trackCover = findViewById(R.id.track_cover)
+        val trackCover: ImageView = findViewById(R.id.track_cover)
         val bckBtn = findViewById<ImageButton>(R.id.audio_player_arrow)
         bckBtn.setOnClickListener {
             finish()
         }
+
         playButton = findViewById(R.id.track_play_btn)
         playButton?.isEnabled = false
         playButton?.setOnClickListener {
-            playbackControl()
+            playBack()
         }
         playingTime = findViewById(R.id.playing_time)
-        val trackFromJson = intent.getStringExtra(TRACK)
-        val track = Gson().fromJson(trackFromJson, Track::class.java)
+        val url: String?
+        val track = trackInteractor.getTrack(intent.getStringExtra(TRACK))
         val cornerRadius = resources.getDimensionPixelSize(R.dimen.track_cover_radius)
-        val trackUrl = track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
+        val trackUrl = trackInteractor.getLargeImageUrl(track.artworkUrl100)
 
         Glide.with(this)
             .load(trackUrl)
             .fitCenter()
             .transform(RoundedCorners(cornerRadius))
             .placeholder(R.drawable.placeholder)
-            .into(trackCover!!)
+            .into(trackCover)
 
         val trackName = findViewById<TextView>(R.id.song_name)
         trackName.text = track.trackName
@@ -66,9 +66,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         val duration = findViewById<TextView>(R.id.track_duration)
         if (!track.trackTimeMillis.isNullOrEmpty()) {
-            duration.text = SimpleDateFormat(
-                "mm:ss", Locale.getDefault()
-            ).format(track.trackTimeMillis.toFloat())
+            duration.text = track.trackTimeMillis
         } else {
             duration.text = getString(R.string.start_time_00)
         }
@@ -85,8 +83,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
 
         val year = findViewById<TextView>(R.id.track_year)
-        val date = LocalDateTime.parse(track.releaseDate, DateTimeFormatter.ISO_DATE_TIME)
-        year.text = date.year.toString()
+        year.text = track.releaseDate
 
         val genre = findViewById<TextView>(R.id.track_genre)
         genre.text = track.primaryGenreName
@@ -94,53 +91,59 @@ class AudioPlayerActivity : AppCompatActivity() {
         val country = findViewById<TextView>(R.id.country_name)
         country.text = track.country
 
-        preparePlayer()
-    }
-
-    private fun preparePlayer() {
-        if (!url.isNullOrEmpty()) {
-            mediaPlayer.setDataSource(url)
-            mediaPlayer.prepareAsync()
-            mediaPlayer.setOnPreparedListener {
-                playButton?.isEnabled = true
-                playerState = AudioPlayerState.PREPARED
-            }
-            mediaPlayer.setOnCompletionListener {
-                playerState = AudioPlayerState.PREPARED
+        audioPlayerInteractor.execute(url, object : AudioPlayerInteractor.AudioPlayerCallback {
+            override fun onComplete() {
                 playingTime?.text = getString(R.string.start_time_00)
                 playButton?.setImageResource(R.drawable.track_play_btn)
+                playerState = PlayerState.PREPARED
+
             }
-        }
 
+            override fun onPrepared() {
+                playButton?.isEnabled = true
+                playerState = PlayerState.PREPARED
+            }
+        })
     }
 
-    private fun startPlayer() {
-        mediaPlayer.start()
-        playerState = AudioPlayerState.PLAYING
-        playButton?.setImageResource(R.drawable.pause_button)
-        timeOfPlayingRunnable.run()
-    }
 
-    private fun pausePlayer() {
-        handler.removeCallbacks(timeOfPlayingRunnable)
-        mediaPlayer.pause()
-        playerState = AudioPlayerState.PAUSED
-        playButton?.setImageResource(R.drawable.track_play_btn)
-    }
-
-    private fun playbackControl() {
+    private fun playBack() {
         when (playerState) {
-            AudioPlayerState.PLAYING -> {
+            PlayerState.PLAYING -> {
                 pausePlayer()
             }
 
-            AudioPlayerState.PREPARED, AudioPlayerState.PAUSED -> {
+            PlayerState.PAUSED, PlayerState.PREPARED -> {
                 startPlayer()
             }
 
             else -> {}
         }
     }
+
+    @Synchronized
+    private fun getCurrentPosition() {
+        if (playerState == PlayerState.PLAYING) {
+            playingTime?.text = audioPlayerInteractor.getCurrentPosition()
+            handler.postDelayed(timeOfPlayingRunnable, PLAYING_TIME_UPDATE_DELAY_MILLIS)
+        }
+    }
+
+    private fun startPlayer() {
+        audioPlayerInteractor.start()
+        playerState = PlayerState.PLAYING
+        playButton?.setImageResource(R.drawable.pause_button)
+        timeOfPlayingRunnable.run()
+    }
+
+    private fun pausePlayer() {
+        handler.removeCallbacks(timeOfPlayingRunnable)
+        audioPlayerInteractor.pause()
+        playerState = PlayerState.PAUSED
+        playButton?.setImageResource(R.drawable.track_play_btn)
+
+    }
+
 
     override fun onPause() {
         super.onPause()
@@ -150,17 +153,13 @@ class AudioPlayerActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacks(timeOfPlayingRunnable)
-        mediaPlayer.release()
+        audioPlayerInteractor.release()
     }
 
-    @Synchronized
-    private fun getCurrentPosition() {
-        if (playerState == AudioPlayerState.PLAYING) {
-            playingTime?.text = SimpleDateFormat(
-                "mm:ss",
-                Locale.getDefault()
-            ).format(mediaPlayer.currentPosition)
-            handler.postDelayed(timeOfPlayingRunnable, PLAYING_TIME_UPDATE_DELAY_MILLIS)
-        }
-    }
+}
+enum class PlayerState {
+    DEFAULT,
+    PREPARED,
+    PLAYING,
+    PAUSED
 }

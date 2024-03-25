@@ -3,6 +3,7 @@ package com.practicum.playlistmaker
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.practicum.playlistmaker.domain.models.Track
 
 class TrackHistoryAdapter(
     private val tracks: List<Track>, private val onClickItem: (Track) -> Unit
