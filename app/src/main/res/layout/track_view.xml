@@ -13,7 +13,8 @@
         android:layout_marginVertical="8dp"
         android:layout_marginStart="13dp"
         android:layout_marginEnd="4dp"
-        tools:background="@drawable/placeholder" />
+        tools:background="@drawable/placeholder"
+        android:importantForAccessibility="no" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -49,7 +50,8 @@
                 android:layout_width="@dimen/song_dot_size"
                 android:layout_height="@dimen/song_dot_size"
                 android:layout_weight="0"
-                android:src="@drawable/dot_image" />
+                android:src="@drawable/dot_image"
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:id="@+id/playing_time"
