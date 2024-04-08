@@ -11,6 +11,7 @@ import com.practicum.playlistmaker.util.Creator
 import com.practicum.playlistmaker.domain.search.SearchHistoryInteractor
 import com.practicum.playlistmaker.domain.search.SearchInteractor
 import com.practicum.playlistmaker.ui.search.SearchScreenState
+import kotlinx.coroutines.flow.merge
 
 
 class SearchViewModel(
@@ -19,32 +20,52 @@ class SearchViewModel(
 ) : ViewModel() {
 
     private val screenStateLiveData = MutableLiveData<SearchScreenState>(SearchScreenState.Default)
-    private var isCreated = false
+    private var isRotated = false
     private var request = ""
+    private var isRefresh = false
 
-    fun loadTrackList() {
+    private fun loadTrackList() {
         setScreenState(SearchScreenState.Loading)
         searchInteractor.loadNewTrackList(
             request = request,
-            onComplete = { data, message ->
-                screenStateLiveData.postValue(SearchScreenState.Content(data, message))
+            onComplete = { data, _ ->
+                if (data == null) {
+                    screenStateLiveData.postValue(SearchScreenState.NoInternet)
+                } else if (data.isEmpty()) {
+                    screenStateLiveData.postValue(SearchScreenState.NoData)
+                } else {
+                    screenStateLiveData.postValue(SearchScreenState.Content(data, null))
+                }
+
             })
     }
 
-    fun isCreated(): Boolean {
-        return isCreated
+    fun setRefresh(isRefresh: Boolean) {
+        this.isRefresh = isRefresh
     }
 
-    fun setCreated() {
-        isCreated = true
+    fun isRotated(): Boolean {
+        return isRotated
     }
 
-    fun getRequest(): String {
-        return request
+    fun setRotated() {
+        isRotated = true
     }
+    fun clearData() {
+        screenStateLiveData.postValue(SearchScreenState.Default)
+        request = ""
+    }
+
 
     fun setRequest(request: String) {
-        this.request = request
+        if (request != this.request) {
+            this.request = request
+            loadTrackList()
+        } else if (isRefresh) {
+            loadTrackList()
+            isRefresh = false
+        }
+
     }
 
 

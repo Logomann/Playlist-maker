@@ -1,18 +1,14 @@
 package com.practicum.playlistmaker.data.search.impl
 
-import androidx.activity.ComponentActivity
+import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.practicum.playlistmaker.util.App
-import com.practicum.playlistmaker.util.PREFERENCES
 import com.practicum.playlistmaker.util.TRACK_KEY
 import com.practicum.playlistmaker.domain.model.track.model.Track
 import com.practicum.playlistmaker.domain.search.SearchHistoryRepository
 
-class SearchHistoryRepositoryImpl : SearchHistoryRepository {
-    private val application = App.getApplication()
-    private val sharedPreferences =
-        application.getSharedPreferences(PREFERENCES, ComponentActivity.MODE_PRIVATE)
+class SearchHistoryRepositoryImpl(private val sharedPreferences: SharedPreferences) : SearchHistoryRepository {
 
     private val listOfTracks = read()
     override fun loadSavedTrackList(): List<Track> {
@@ -54,8 +50,8 @@ class SearchHistoryRepositoryImpl : SearchHistoryRepository {
 
     private fun write() {
         val json = Gson().toJson(listOfTracks)
-        sharedPreferences.edit()
-            .putString(TRACK_KEY, json)
-            .apply()
+        sharedPreferences.edit {
+            putString(TRACK_KEY, json)
+        }
     }
 }

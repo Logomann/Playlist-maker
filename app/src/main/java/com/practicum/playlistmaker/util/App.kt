@@ -2,7 +2,9 @@ package com.practicum.playlistmaker.util
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.Context
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatDelegate
 
 
@@ -16,6 +18,17 @@ class App : Application() {
         private lateinit var application: Application
         fun getApplication(): Application {
             return application
+        }
+        private lateinit var sharedPrefs: SharedPreferences
+        fun getSharedPreferences() : SharedPreferences {
+            sharedPrefs = application.getSharedPreferences(PREFERENCES, MODE_PRIVATE)
+            return sharedPrefs
+        }
+        private lateinit var connectivityManager: ConnectivityManager
+        fun getConnectivityManager(): ConnectivityManager {
+            connectivityManager = application.getSystemService(
+                Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            return connectivityManager
         }
     }
 

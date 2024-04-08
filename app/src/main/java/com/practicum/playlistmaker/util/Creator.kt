@@ -29,6 +29,8 @@ import com.practicum.playlistmaker.domain.sharing.impl.SharingInteractorImpl
 
 object Creator {
     private val application = App.getApplication()
+    private val sharedPreferences = App.getSharedPreferences()
+    private val connectivityManager = App.getConnectivityManager()
     private fun getAudioPlayerRepository(): AudioPlayerRepository {
         return AudioPlayerRepositoryImpl()
     }
@@ -54,11 +56,11 @@ object Creator {
     }
 
     private fun getExternalNavigator(): ExternalNavigator {
-        return ExternalNavigatorImpl()
+        return ExternalNavigatorImpl(application)
     }
 
     private fun getSettingsInteractor(): SettingsRepository {
-        return SettingsRepositoryImpl()
+        return SettingsRepositoryImpl(sharedPreferences)
     }
 
     fun provideSearchInteractor(): SearchInteractor {
@@ -70,11 +72,11 @@ object Creator {
     }
 
     private fun getSearchRepository(): SearchRepository {
-        return SearchRepositoryImpl(RetrofitNetworkClient(application))
+        return SearchRepositoryImpl(RetrofitNetworkClient(connectivityManager))
     }
 
     private fun getSearchHistoryRepository(): SearchHistoryRepository {
-        return SearchHistoryRepositoryImpl()
+        return SearchHistoryRepositoryImpl(sharedPreferences)
     }
 
 

@@ -11,4 +11,6 @@ sealed class SearchScreenState {
     ) : SearchScreenState()
 
     data object Default : SearchScreenState()
+    data object NoInternet : SearchScreenState()
+    data object NoData : SearchScreenState()
 }

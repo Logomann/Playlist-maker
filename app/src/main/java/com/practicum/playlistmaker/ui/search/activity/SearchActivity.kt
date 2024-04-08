@@ -63,6 +63,11 @@ class SearchActivity : AppCompatActivity() {
         outState.putString(EDIT_FIELD, editText)
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewModel.setRotated()
+    }
+
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         editText = savedInstanceState.getString(EDIT_FIELD, "")
@@ -104,6 +109,7 @@ class SearchActivity : AppCompatActivity() {
             editField.text.clear()
             listOfTracks.clear()
             adapter.notifyDataSetChanged()
+            viewModel.clearData()
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(editField.windowToken, 0)
@@ -137,10 +143,9 @@ class SearchActivity : AppCompatActivity() {
         trackRecyclerView.adapter = adapter
 
         editField.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && history.isNotEmpty() && !viewModel.isCreated()) {
+            if (hasFocus && history.isNotEmpty() && !viewModel.isRotated()) {
                 hidePlaceholder()
                 readTrackHistory()
-                viewModel.setCreated()
             }
         }
 
@@ -148,20 +153,24 @@ class SearchActivity : AppCompatActivity() {
             when (screenState) {
                 is SearchScreenState.Content -> {
                     changeContentVisibility(loading = false)
-                    if (!screenState.data.isNullOrEmpty()) {
-                        listOfTracks.addAll(screenState.data)
-                        adapter.notifyDataSetChanged()
-                    } else if (screenState.data == null) {
-                        setPlaceholderNoInternet()
-                    } else {
-                        setPlaceholder()
-                    }
+                    listOfTracks.addAll(screenState.data!!)
+                    adapter.notifyDataSetChanged()
                 }
 
-                is SearchScreenState.Loading -> {
+                SearchScreenState.Loading -> {
                     listOfTracks.clear()
                     adapter.notifyDataSetChanged()
                     changeContentVisibility(loading = true)
+                }
+
+                SearchScreenState.NoData -> {
+                    changeContentVisibility(loading = false)
+                    setPlaceholder()
+                }
+
+                SearchScreenState.NoInternet -> {
+                    changeContentVisibility(loading = false)
+                    setPlaceholderNoInternet()
                 }
 
                 SearchScreenState.Default -> {}
@@ -207,13 +216,8 @@ class SearchActivity : AppCompatActivity() {
         return current
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun search() {
-        if (lastQuery != viewModel.getRequest()) {
-            viewModel.setRequest(lastQuery)
-            viewModel.loadTrackList()
-        }
-
+        viewModel.setRequest(lastQuery)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -224,6 +228,7 @@ class SearchActivity : AppCompatActivity() {
         placeholderText.text = getString(R.string.search_placeholder_text_no_internet)
         placeholderImageNoInternet.isVisible = true
         placeholderText.isVisible = true
+        viewModel.setRefresh(true)
         refreshButton.isVisible = true
         refreshButton.setOnClickListener {
             searchDebounce()

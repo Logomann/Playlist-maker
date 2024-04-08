@@ -30,7 +30,6 @@ class AudioPlayerActivity : AppCompatActivity() {
     private var playingTime: TextView? = null
     private val handler = Handler(Looper.getMainLooper())
     private val timeOfPlayingRunnable = Runnable { getCurrentPosition() }
-    private var playerState = PlayerState.DEFAULT
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
@@ -48,7 +47,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         playButton = binding.trackPlayBtn
         playButton?.isEnabled = false
         playButton?.setOnClickListener {
-            playBack()
+            viewModel.playBack()
         }
 
         playingTime = binding.playingTime
@@ -73,11 +72,8 @@ class AudioPlayerActivity : AppCompatActivity() {
         artistName.text = track.artistName
 
         val duration = binding.trackDuration
-        if (!track.trackTimeMillis.isNullOrEmpty()) {
-            duration.text = track.trackTimeMillis
-        } else {
-            duration.text = getString(R.string.start_time_00)
-        }
+        duration.text = track.trackTimeMillis
+
 
         playingTime!!.text = viewModel.getCurrentPosition()
 
@@ -102,16 +98,22 @@ class AudioPlayerActivity : AppCompatActivity() {
         if (!url.isNullOrEmpty()) {
             viewModel.getScreenStateLiveData(url).observe(this) { screenState ->
                 when (screenState) {
-                    AudioPlayerState.OnPrepared -> {
+                    AudioPlayerState.PREPARED -> {
                         playButton?.isEnabled = true
-                        playerState = PlayerState.PREPARED
                     }
 
-                    AudioPlayerState.OnComplete -> {
+                    AudioPlayerState.COMPLETED -> {
                         playingTime?.text = getString(R.string.start_time_00)
                         playButton?.setImageResource(R.drawable.track_play_btn)
-                        playerState = PlayerState.PREPARED
-                        viewModel.setOnPreparedState()
+                    }
+
+                    AudioPlayerState.PLAYING -> {
+                        startPlayer()
+                    }
+
+                    AudioPlayerState.PAUSED -> {
+                        playButton?.isEnabled = true
+                        pausePlayer()
                     }
 
                     else -> {}
@@ -122,46 +124,26 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
 
-    private fun playBack() {
-        when (playerState) {
-            PlayerState.PLAYING -> {
-                pausePlayer()
-            }
-
-            PlayerState.PAUSED, PlayerState.PREPARED -> {
-                startPlayer()
-            }
-
-            else -> {}
-        }
-    }
-
     @Synchronized
     private fun getCurrentPosition() {
-        if (playerState == PlayerState.PLAYING) {
-            playingTime?.text = viewModel.getCurrentPosition()
-            handler.postDelayed(timeOfPlayingRunnable, PLAYING_TIME_UPDATE_DELAY_MILLIS)
-        }
+        playingTime?.text = viewModel.getCurrentPosition()
+        handler.postDelayed(timeOfPlayingRunnable, PLAYING_TIME_UPDATE_DELAY_MILLIS)
     }
 
     private fun startPlayer() {
-        viewModel.play()
-        playerState = PlayerState.PLAYING
         playButton?.setImageResource(R.drawable.pause_button)
         timeOfPlayingRunnable.run()
     }
 
     private fun pausePlayer() {
         handler.removeCallbacks(timeOfPlayingRunnable)
-        viewModel.pause()
-        playerState = PlayerState.PAUSED
         playButton?.setImageResource(R.drawable.track_play_btn)
     }
 
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
+        viewModel.pause()
     }
 
     override fun onDestroy() {
@@ -171,9 +153,3 @@ class AudioPlayerActivity : AppCompatActivity() {
 
 }
 
-enum class PlayerState {
-    DEFAULT,
-    PREPARED,
-    PLAYING,
-    PAUSED
-}

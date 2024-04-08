@@ -16,44 +16,47 @@ import com.practicum.playlistmaker.ui.player.AudioPlayerState
 
 class AudioPlayerViewModel(
     private val apInteractor: AudioPlayerInteractor,
-    private val trackImageInteractor: TrackInteractor
+    private val trackInteractor: TrackInteractor
 ) : ViewModel() {
     private val screenStateLiveData =
-        MutableLiveData(AudioPlayerState.OnDefault)
+        MutableLiveData(AudioPlayerState.DEFAULT)
     private var isPrepared = false
+    private var playerState = AudioPlayerState.DEFAULT
     fun getScreenStateLiveData(url: String): LiveData<AudioPlayerState> {
         if (!isPrepared) {
             apInteractor.prepare(url)
         }
         apInteractor.execute(url, object : AudioPlayerInteractor.AudioPlayerCallback {
             override fun onComplete() {
-                screenStateLiveData.postValue(AudioPlayerState.OnComplete)
+                screenStateLiveData.postValue(AudioPlayerState.COMPLETED)
+                playerState = AudioPlayerState.COMPLETED
             }
 
             override fun onPrepared() {
                 isPrepared = true
-                screenStateLiveData.postValue(AudioPlayerState.OnPrepared)
+                screenStateLiveData.postValue(AudioPlayerState.PREPARED)
+                playerState = AudioPlayerState.PREPARED
             }
 
         })
         return screenStateLiveData
     }
 
-    fun setOnPreparedState() {
-        screenStateLiveData.postValue(AudioPlayerState.OnPrepared)
-    }
-
     fun getImage(url: String): String {
-        return trackImageInteractor.getLargeImageUrl(url)
+        return trackInteractor.getLargeImageUrl(url)
     }
 
     fun getTrack(url: String?): Track {
-        val track = trackImageInteractor.getTrack(url)
+        val track = trackInteractor.getTrack(url)
+        var timeMillis = "00:00"
+        if (!track.trackTimeMillis.isNullOrEmpty()) {
+            timeMillis = track.trackTimeMillis
+        }
         return Track(
             track.trackId,
             track.trackName,
             track.artistName,
-            track.trackTimeMillis,
+            timeMillis,
             track.artworkUrl100,
             track.collectionName,
             track.releaseDate,
@@ -63,12 +66,30 @@ class AudioPlayerViewModel(
         )
     }
 
-    fun play() {
+    private fun play() {
         apInteractor.start()
+        screenStateLiveData.postValue(AudioPlayerState.PLAYING)
+        playerState = AudioPlayerState.PLAYING
     }
 
-    fun pause() {
+     fun pause() {
         apInteractor.pause()
+        screenStateLiveData.postValue(AudioPlayerState.PAUSED)
+        playerState = AudioPlayerState.PAUSED
+    }
+
+    fun playBack() {
+        when (playerState) {
+            AudioPlayerState.PLAYING -> {
+                pause()
+            }
+
+            AudioPlayerState.PAUSED, AudioPlayerState.PREPARED, AudioPlayerState.COMPLETED -> {
+                play()
+            }
+
+            else -> {}
+        }
     }
 
     fun getCurrentPosition(): String {
