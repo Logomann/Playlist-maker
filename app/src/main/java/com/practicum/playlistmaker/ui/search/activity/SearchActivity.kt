@@ -109,6 +109,9 @@ class SearchActivity : AppCompatActivity() {
             editField.text.clear()
             listOfTracks.clear()
             adapter.notifyDataSetChanged()
+            if (history.isNotEmpty()) {
+                readTrackHistory()
+            }
             viewModel.clearData()
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
