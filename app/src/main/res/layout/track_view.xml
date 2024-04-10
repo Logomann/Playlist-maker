@@ -13,7 +13,8 @@
         android:layout_marginVertical="8dp"
         android:layout_marginStart="13dp"
         android:layout_marginEnd="4dp"
-        tools:background="@drawable/placeholder" />
+        tools:background="@drawable/placeholder"
+        android:importantForAccessibility="no" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -26,7 +27,7 @@
         <TextView
             android:id="@+id/name_of_song"
             style="@style/SongNameStyle"
-            tools:text="@string/track_1_name" />
+            tools:text="TrackName" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -43,13 +44,14 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:singleLine="true"
-                tools:text="@string/track_1_artist" />
+                tools:text="ArtiistName" />
 
             <ImageView
                 android:layout_width="@dimen/song_dot_size"
                 android:layout_height="@dimen/song_dot_size"
                 android:layout_weight="0"
-                android:src="@drawable/dot_image" />
+                android:src="@drawable/dot_image"
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:id="@+id/playing_time"
@@ -57,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                tools:text="@string/track_1_time" />
+                tools:text="5:30" />
         </LinearLayout>
     </LinearLayout>
 
