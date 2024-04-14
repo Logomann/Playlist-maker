@@ -11,12 +11,12 @@ import com.practicum.playlistmaker.data.search.network.RetrofitNetworkClient
 import com.practicum.playlistmaker.data.sharing.impl.ExternalNavigatorImpl
 import com.practicum.playlistmaker.domain.sharing.ExternalNavigator
 import com.practicum.playlistmaker.util.App
+import com.practicum.playlistmaker.util.PREFERENCES
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-const val PREFERENCES = "preferences"
 val dataModule = module {
 
     single<ITunesApi> {
