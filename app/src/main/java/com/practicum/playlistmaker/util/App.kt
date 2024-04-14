@@ -1,11 +1,14 @@
 package com.practicum.playlistmaker.util
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
 import android.content.SharedPreferences
-import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatDelegate
+import com.practicum.playlistmaker.di.dataModule
+import com.practicum.playlistmaker.di.interactorModule
+import com.practicum.playlistmaker.di.repositoryModule
+import com.practicum.playlistmaker.di.viewModelModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
 
 const val PREFERENCES = "preferences"
@@ -13,33 +16,20 @@ const val THEME_KEY = "key_for_theme"
 const val TRACK_KEY = "TRACK_KEY"
 
 class App : Application() {
-    companion object {
-        @SuppressLint("StaticFieldLeak")
-        private lateinit var application: Application
-        fun getApplication(): Application {
-            return application
-        }
-        private lateinit var sharedPrefs: SharedPreferences
-        fun getSharedPreferences() : SharedPreferences {
-            sharedPrefs = application.getSharedPreferences(PREFERENCES, MODE_PRIVATE)
-            return sharedPrefs
-        }
-        private lateinit var connectivityManager: ConnectivityManager
-        fun getConnectivityManager(): ConnectivityManager {
-            connectivityManager = application.getSystemService(
-                Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            return connectivityManager
-        }
-    }
 
     private var darkTheme = false
     private lateinit var sharedPrefs: SharedPreferences
+    private lateinit var application: Application
     override fun onCreate() {
         super.onCreate()
         application = this
         sharedPrefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
         darkTheme = sharedPrefs.getBoolean(THEME_KEY, darkTheme)
         switchTheme(darkTheme)
+        startKoin {
+            androidContext(this@App)
+            modules(dataModule, repositoryModule, interactorModule, viewModelModule)
+        }
     }
 
 
