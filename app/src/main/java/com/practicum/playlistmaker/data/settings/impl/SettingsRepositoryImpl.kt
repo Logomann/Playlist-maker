@@ -7,8 +7,10 @@ import com.practicum.playlistmaker.util.THEME_KEY
 import com.practicum.playlistmaker.domain.settings.SettingsRepository
 import com.practicum.playlistmaker.domain.settings.model.ThemeSettings
 
-class SettingsRepositoryImpl(private val sharedPreferences: SharedPreferences) : SettingsRepository {
-    private val app = App()
+class SettingsRepositoryImpl(
+    private val sharedPreferences: SharedPreferences,
+    private val app: App
+) : SettingsRepository {
 
     override fun getThemeSettings(): ThemeSettings {
         val isDark = sharedPreferences.getBoolean(THEME_KEY, false)

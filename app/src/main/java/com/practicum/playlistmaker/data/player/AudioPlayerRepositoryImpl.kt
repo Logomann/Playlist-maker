@@ -1,11 +1,10 @@
 package com.practicum.playlistmaker.data.player
 
 
+import android.media.MediaPlayer
 import com.practicum.playlistmaker.domain.player.AudioPlayerRepository
 
-class AudioPlayerRepositoryImpl : AudioPlayerRepository {
-
-    private var mediaPlayer = AudioPlayer().getMediaPlayer()
+class AudioPlayerRepositoryImpl(private val mediaPlayer : MediaPlayer) : AudioPlayerRepository {
     override fun getPlayerState(
         url: String,
         playerCallback: AudioPlayerRepository.AudioPlayerCallback
@@ -34,7 +33,7 @@ class AudioPlayerRepositoryImpl : AudioPlayerRepository {
     }
 
     override fun release() {
-        mediaPlayer.release()
+        mediaPlayer.reset()
     }
 
     override fun getCurrentPosition(): Int {

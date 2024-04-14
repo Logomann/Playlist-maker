@@ -7,7 +7,6 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
@@ -15,10 +14,11 @@ import com.practicum.playlistmaker.util.TRACK_KEY
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.practicum.playlistmaker.ui.player.AudioPlayerState
 import com.practicum.playlistmaker.ui.player.view_model.AudioPlayerViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class AudioPlayerActivity : AppCompatActivity() {
-    private lateinit var viewModel: AudioPlayerViewModel
+    private val viewModel by viewModel<AudioPlayerViewModel>()
     private lateinit var binding: ActivityAudioPlayerBinding
 
     companion object {
@@ -34,10 +34,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel = ViewModelProvider(
-            this,
-            AudioPlayerViewModel.getViewModelFactory()
-        )[AudioPlayerViewModel::class.java]
 
         val trackCover = binding.trackCover
         val bckBtn = binding.audioPlayerArrow
@@ -75,7 +71,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         duration.text = track.trackTimeMillis
 
 
-        playingTime!!.text = viewModel.getCurrentPosition()
+
 
         val albumGroup = binding.albumGroup
 
@@ -120,6 +116,7 @@ class AudioPlayerActivity : AppCompatActivity() {
                 }
             }
         }
+        playingTime!!.text = viewModel.getCurrentPosition()
 
     }
 

@@ -8,7 +8,10 @@ import com.practicum.playlistmaker.util.TRACK_KEY
 import com.practicum.playlistmaker.domain.model.track.model.Track
 import com.practicum.playlistmaker.domain.search.SearchHistoryRepository
 
-class SearchHistoryRepositoryImpl(private val sharedPreferences: SharedPreferences) : SearchHistoryRepository {
+class SearchHistoryRepositoryImpl(
+    private val sharedPreferences: SharedPreferences,
+    private val gson: Gson
+) : SearchHistoryRepository {
 
     private val listOfTracks = read()
     override fun loadSavedTrackList(): List<Track> {
@@ -31,7 +34,7 @@ class SearchHistoryRepositoryImpl(private val sharedPreferences: SharedPreferenc
     private fun read(): ArrayList<Track> {
         val json = sharedPreferences.getString(TRACK_KEY, null) ?: return ArrayList()
         val type = object : TypeToken<ArrayList<Track>>() {}.type
-        return Gson().fromJson(json, type)
+        return gson.fromJson(json, type)
     }
 
     private fun addTrack(track: Track) {
@@ -49,7 +52,7 @@ class SearchHistoryRepositoryImpl(private val sharedPreferences: SharedPreferenc
     }
 
     private fun write() {
-        val json = Gson().toJson(listOfTracks)
+        val json = gson.toJson(listOfTracks)
         sharedPreferences.edit {
             putString(TRACK_KEY, json)
         }
