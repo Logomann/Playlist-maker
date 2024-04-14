@@ -5,8 +5,8 @@ import com.practicum.playlistmaker.domain.model.track.TrackRepository
 import com.practicum.playlistmaker.domain.model.track.model.Track
 
 
-class TrackRepositoryImpl : TrackRepository {
+class TrackRepositoryImpl(private val gson: Gson) : TrackRepository {
     override fun getTrackFromGson(gsonArray: String?): Track {
-        return Gson().fromJson(gsonArray, Track::class.java)
+        return gson.fromJson(gsonArray, Track::class.java)
     }
 }

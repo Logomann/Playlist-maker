@@ -4,10 +4,6 @@ package com.practicum.playlistmaker.ui.player.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.practicum.playlistmaker.util.Creator
 import com.practicum.playlistmaker.domain.model.track.TrackInteractor
 import com.practicum.playlistmaker.domain.model.track.model.Track
 import com.practicum.playlistmaker.domain.player.AudioPlayerInteractor
@@ -72,7 +68,7 @@ class AudioPlayerViewModel(
         playerState = AudioPlayerState.PLAYING
     }
 
-     fun pause() {
+    fun pause() {
         apInteractor.pause()
         screenStateLiveData.postValue(AudioPlayerState.PAUSED)
         playerState = AudioPlayerState.PAUSED
@@ -98,17 +94,6 @@ class AudioPlayerViewModel(
 
     private fun release() {
         apInteractor.release()
-    }
-
-    companion object {
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                AudioPlayerViewModel(
-                    Creator.provideAudioPlayerInteractor(),
-                    Creator.provideTrackImageInteractor()
-                )
-            }
-        }
     }
 
     override fun onCleared() {
