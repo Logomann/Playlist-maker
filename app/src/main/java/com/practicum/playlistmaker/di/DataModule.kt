@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.di
 
-import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import com.google.gson.Gson
@@ -11,7 +10,6 @@ import com.practicum.playlistmaker.data.search.network.RetrofitNetworkClient
 import com.practicum.playlistmaker.data.sharing.impl.ExternalNavigatorImpl
 import com.practicum.playlistmaker.domain.sharing.ExternalNavigator
 import com.practicum.playlistmaker.util.App
-import com.practicum.playlistmaker.util.PREFERENCES
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -25,9 +23,6 @@ val dataModule = module {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ITunesApi::class.java)
-    }
-    single {
-        androidContext().getSharedPreferences(PREFERENCES, Application.MODE_PRIVATE)
     }
 
     factory { Gson() }
