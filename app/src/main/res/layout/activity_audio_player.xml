@@ -64,7 +64,8 @@
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
         app:layout_constraintTop_toBottomOf="@id/audio_player_arrow"
-        tools:background="@drawable/placeholder" />
+        tools:background="@drawable/placeholder"
+        android:importantForAccessibility="no" />
 
     <TextView
         android:id="@+id/song_name"
