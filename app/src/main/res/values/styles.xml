@@ -105,4 +105,22 @@
         <item name="android:textColor">@color/audio_player_text</item>
         <item name="android:textSize">13sp</item>
     </style>
+
+    <style name="NewPlaylistButtonStyle">
+        <item name="cornerRadius">54dp</item>
+        <item name="android:backgroundTint">@color/settings_text_color</item>
+        <item name="android:textColor">@color/settings_background</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TabLayoutStyle">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:gravity">center</item>
+    </style>
 </resources>
