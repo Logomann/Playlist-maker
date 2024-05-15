@@ -34,11 +34,10 @@ class AudioPlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         val trackCover = binding.trackCover
         val bckBtn = binding.audioPlayerArrow
         bckBtn.setOnClickListener {
-            finish()
+          finish()
         }
         playButton = binding.trackPlayBtn
         playButton?.isEnabled = false
@@ -69,8 +68,6 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         val duration = binding.trackDuration
         duration.text = track.trackTimeMillis
-
-
 
 
         val albumGroup = binding.albumGroup

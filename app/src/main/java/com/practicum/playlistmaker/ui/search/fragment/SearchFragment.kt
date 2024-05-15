@@ -1,14 +1,15 @@
-package com.practicum.playlistmaker.ui.search.activity
+package com.practicum.playlistmaker.ui.search.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
@@ -16,22 +17,24 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.util.TRACK_KEY
 import com.practicum.playlistmaker.ui.search.TrackAdapter
 import com.practicum.playlistmaker.ui.search.TrackHistoryAdapter
-import com.practicum.playlistmaker.databinding.ActivitySearchBinding
+import com.practicum.playlistmaker.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker.domain.model.track.model.Track
 import com.practicum.playlistmaker.ui.search.SearchScreenState
-import com.practicum.playlistmaker.ui.player.activity.AudioPlayerActivity
 import com.practicum.playlistmaker.ui.search.view_model.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
     companion object {
         private const val EDIT_FIELD = "EDIT_FIELD"
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
@@ -39,7 +42,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private val viewModel by viewModel<SearchViewModel>()
-    private lateinit var binding: ActivitySearchBinding
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
 
     private var editText = ""
     private val listOfTracks = ArrayList<Track>()
@@ -58,36 +62,19 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchHistory: LinearLayout
     private lateinit var clearHistoryButton: Button
     private lateinit var progressBar: ProgressBar
+    private var history = listOf<Track>()
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(EDIT_FIELD, editText)
     }
 
-    override fun onPause() {
-        super.onPause()
-        viewModel.setRotated()
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        editText = savedInstanceState.getString(EDIT_FIELD, "")
-        editField.setText(editText)
-        lastQuery = editText
-    }
-
-
-    @SuppressLint("NotifyDataSetChanged")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-
-        val backBtn = binding.searchArrowBackBtn
-        backBtn.setOnClickListener {
-            this.finish()
-        }
-
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSearchBinding.inflate(layoutInflater, container, false)
         editField = binding.searchEditField
         placeholderImage = binding.searchPlaceholderImage
         placeholderImageNoInternet = binding.searchPlaceholderImageNoInternet
@@ -96,9 +83,16 @@ class SearchActivity : AppCompatActivity() {
         searchHistory = binding.searchHistoryGroup
         clearHistoryButton = binding.searchCleanHistory
         progressBar = binding.pbTrackSearch
+        return binding.root
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         editField.isFocusableInTouchMode = true
         val clearBtn = binding.searchClearBtn
-        val history = viewModel.loadSavedTrackList()
+        history = viewModel.loadSavedTrackList()
 
         clearBtn.setOnClickListener {
             editField.text.clear()
@@ -109,7 +103,7 @@ class SearchActivity : AppCompatActivity() {
             }
             viewModel.clearData()
             val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(editField.windowToken, 0)
         }
         val editTextWatcher = object : TextWatcher {
@@ -137,22 +131,16 @@ class SearchActivity : AppCompatActivity() {
         editField.addTextChangedListener(editTextWatcher)
 
         val trackRecyclerView = binding.songRecycleView
-        trackRecyclerView.layoutManager = LinearLayoutManager(this)
+        trackRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         trackRecyclerView.adapter = adapter
 
-        editField.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && history.isNotEmpty() && !viewModel.isRotated()) {
-                hidePlaceholder()
-                readTrackHistory()
-            }
-        }
-
-        viewModel.getScreenStateLiveData().observe(this) { screenState ->
+        viewModel.getScreenStateLiveData().observe(viewLifecycleOwner) { screenState ->
             when (screenState) {
                 is SearchScreenState.Content -> {
                     changeContentVisibility(loading = false)
                     listOfTracks.addAll(screenState.data!!)
                     adapter.notifyDataSetChanged()
+                    hideHistory()
                 }
 
                 SearchScreenState.Loading -> {
@@ -171,10 +159,11 @@ class SearchActivity : AppCompatActivity() {
                     setPlaceholderNoInternet()
                 }
 
-                SearchScreenState.Default -> {}
+                SearchScreenState.Default -> {
+                    setOnFocusListener()
+                }
             }
         }
-
 
     }
 
@@ -190,9 +179,12 @@ class SearchActivity : AppCompatActivity() {
             viewModel.saveTrackToHistory(track)
         }
         if (clickDebounce()) {
-            val intent = Intent(this, AudioPlayerActivity::class.java)
-            intent.putExtra(TRACK_KEY, json)
-            startActivity(intent)
+            findNavController().navigate(
+                R.id.action_searchFragment_to_audioPlayerActivity, bundleOf(
+                    TRACK_KEY to json
+                )
+            )
+
         }
 
     }
@@ -202,6 +194,17 @@ class SearchActivity : AppCompatActivity() {
         if (editField.text.isNotEmpty()) {
             lastQuery = editField.text.toString()
             handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+        }
+    }
+
+    private fun setOnFocusListener() {
+        editField.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                if (history.isNotEmpty()) {
+                    hidePlaceholder()
+                    readTrackHistory()
+                }
+            }
         }
     }
 
@@ -247,7 +250,7 @@ class SearchActivity : AppCompatActivity() {
     private fun readTrackHistory() {
         searchHistory.isVisible = true
         val historyTrackRecyclerView = binding.searchRecyclerHistory
-        historyTrackRecyclerView.layoutManager = LinearLayoutManager(this)
+        historyTrackRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         val listOfTracksHistory = viewModel.loadSavedTrackList()
 
         val historyAdapter = TrackHistoryAdapter(listOfTracksHistory) {
