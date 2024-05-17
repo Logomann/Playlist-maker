@@ -24,11 +24,6 @@ class MediaLibraryFragment : Fragment(), SelectMediaLibraryPage {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMediaLibraryBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         val adapter = MediaLibraryAdapter(hostFragment = this)
         binding.fragMediaVp.adapter = adapter
         tabMediator = TabLayoutMediator(binding.fragMediaTl, binding.fragMediaVp) { tab, position ->
@@ -38,10 +33,7 @@ class MediaLibraryFragment : Fragment(), SelectMediaLibraryPage {
             }
         }
         tabMediator.attach()
+        return binding.root
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        tabMediator.detach()
-    }
 }
