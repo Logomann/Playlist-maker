@@ -39,6 +39,10 @@ class PlaylistFragment : Fragment() {
 
         }
     }
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
+    }
     private fun setPlaceholder() {
         binding.fragPlaylistBtn.isVisible = true
         binding.fragPlaylistTv.isVisible = true

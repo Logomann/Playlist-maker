@@ -51,4 +51,8 @@ class SettingsFragment : Fragment() {
             viewModel.openTerms()
         }
     }
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
+    }
 }
