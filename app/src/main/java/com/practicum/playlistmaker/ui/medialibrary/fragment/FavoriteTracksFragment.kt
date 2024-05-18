@@ -40,6 +40,11 @@ class FavoriteTracksFragment : Fragment() {
         }
     }
 
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
+    }
+
     private fun setPlaceholder() {
         binding.fragTrackPlaceholderTv.isVisible = true
         binding.fragmentTracksPlaceholderImage.isVisible = true

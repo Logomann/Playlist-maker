@@ -15,8 +15,10 @@ class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "text/plain"
         intent.putExtra(Intent.EXTRA_TEXT, link)
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(intent)
+        context.startActivity(
+            Intent.createChooser(intent, context.getString(R.string.share_app))
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
     }
 
     override fun openLink() {
@@ -34,10 +36,13 @@ class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
             context.getString(R.string.supp_email_address)
         )
         val intent = Intent(Intent.ACTION_SENDTO)
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.data =
             Uri.parse("mailto:${emailData.address}?subject=${emailData.subject}&body=${emailData.body}")
-        context.startActivity(intent)
+        val createChooserIntent = Intent.createChooser(
+            intent,
+            context.getString(R.string.text_to_support)
+        )
+        context.startActivity(createChooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 
 }

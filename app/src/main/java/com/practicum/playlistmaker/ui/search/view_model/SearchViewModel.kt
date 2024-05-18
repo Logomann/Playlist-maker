@@ -15,7 +15,6 @@ class SearchViewModel(
 ) : ViewModel() {
 
     private val screenStateLiveData = MutableLiveData<SearchScreenState>(SearchScreenState.Default)
-    private var isRotated = false
     private var request = ""
     private var isRefresh = false
 
@@ -39,13 +38,6 @@ class SearchViewModel(
         this.isRefresh = isRefresh
     }
 
-    fun isRotated(): Boolean {
-        return isRotated
-    }
-
-    fun setRotated() {
-        isRotated = true
-    }
     fun clearData() {
         screenStateLiveData.postValue(SearchScreenState.Default)
         request = ""
