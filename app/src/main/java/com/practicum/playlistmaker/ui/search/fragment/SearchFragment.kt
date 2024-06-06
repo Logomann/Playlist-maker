@@ -3,8 +3,6 @@ package com.practicum.playlistmaker.ui.search.fragment
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -20,6 +18,7 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
@@ -31,6 +30,7 @@ import com.practicum.playlistmaker.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker.domain.model.track.model.Track
 import com.practicum.playlistmaker.ui.search.SearchScreenState
 import com.practicum.playlistmaker.ui.search.view_model.SearchViewModel
+import com.practicum.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -45,14 +45,14 @@ class SearchFragment : Fragment() {
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var trackSearchDebounce: (String, String) -> Unit
+    private lateinit var onTrackClickDebounce: (Track, Boolean) -> Unit
+
     private var editText = ""
     private val listOfTracks = ArrayList<Track>()
     private val adapter = TrackAdapter(listOfTracks) {
-        setOnItemAction(it, true)
+        onTrackClickDebounce(it, true)
     }
-    private val searchRunnable = Runnable { search() }
-    private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
     private var lastQuery = ""
     private lateinit var editField: EditText
     private lateinit var placeholderImage: ImageView
@@ -94,6 +94,20 @@ class SearchFragment : Fragment() {
         val clearBtn = binding.searchClearBtn
         history = viewModel.loadSavedTrackList()
 
+        onTrackClickDebounce = debounce(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { track, isHistory ->
+            setOnItemAction(track, isHistory)
+        }
+        trackSearchDebounce = debounce(
+            SEARCH_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            true
+        ) { _, _ ->
+            searchDebounce()
+        }
         clearBtn.setOnClickListener {
             editField.text.clear()
             listOfTracks.clear()
@@ -122,7 +136,7 @@ class SearchFragment : Fragment() {
                         hideHistory()
                     }
                 }
-                searchDebounce()
+                trackSearchDebounce(editText, editText)
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -178,22 +192,17 @@ class SearchFragment : Fragment() {
         if (isNotHistory) {
             viewModel.saveTrackToHistory(track)
         }
-        if (clickDebounce()) {
-            findNavController().navigate(
-                R.id.action_searchFragment_to_audioPlayerActivity, bundleOf(
-                    TRACK_KEY to json
-                )
+        findNavController().navigate(
+            R.id.action_searchFragment_to_audioPlayerActivity, bundleOf(
+                TRACK_KEY to json
             )
-
-        }
-
+        )
     }
 
     private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
         if (editField.text.isNotEmpty()) {
             lastQuery = editField.text.toString()
-            handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+            search()
         }
     }
 
@@ -211,15 +220,6 @@ class SearchFragment : Fragment() {
     override fun onDestroy() {
         _binding = null
         super.onDestroy()
-    }
-
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
     }
 
     private fun search() {
