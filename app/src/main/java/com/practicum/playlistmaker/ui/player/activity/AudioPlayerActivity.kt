@@ -5,32 +5,21 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.util.TRACK_KEY
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
-import com.practicum.playlistmaker.ui.player.AudioPlayerState
+import com.practicum.playlistmaker.ui.player.AudioPlayerScreenState
 import com.practicum.playlistmaker.ui.player.view_model.AudioPlayerViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class AudioPlayerActivity : AppCompatActivity() {
     private val viewModel by viewModel<AudioPlayerViewModel>()
     private lateinit var binding: ActivityAudioPlayerBinding
-
-    companion object {
-        private const val PLAYING_TIME_UPDATE_DELAY_MILLIS = 300L
-    }
-
-
     private var playButton: ImageButton? = null
     private var playingTime: TextView? = null
-    private var timerJob: Job? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
@@ -92,48 +81,35 @@ class AudioPlayerActivity : AppCompatActivity() {
         if (!url.isNullOrEmpty()) {
             viewModel.getScreenStateLiveData(url).observe(this) { screenState ->
                 when (screenState) {
-                    AudioPlayerState.PREPARED -> {
+                    AudioPlayerScreenState.Prepared -> {
                         playButton?.isEnabled = true
                     }
 
-                    AudioPlayerState.COMPLETED -> {
+                    AudioPlayerScreenState.Completed -> {
                         playingTime?.text = getString(R.string.start_time_00)
                         playButton?.setImageResource(R.drawable.track_play_btn)
                     }
 
-                    AudioPlayerState.PLAYING -> {
+                    is AudioPlayerScreenState.Playing -> {
                         startPlayer()
+                        playingTime?.text = screenState.progress
                     }
 
-                    AudioPlayerState.PAUSED -> {
+                    AudioPlayerScreenState.Paused -> {
                         playButton?.isEnabled = true
                         pausePlayer()
                     }
 
-                    else -> {}
+                    else -> { }
                 }
             }
         }
-        playingTime!!.text = viewModel.getCurrentPosition()
 
     }
 
-    private fun startTimer() {
-        timerJob = lifecycleScope.launch {
-            delay(PLAYING_TIME_UPDATE_DELAY_MILLIS)
-            getCurrentPosition()
-        }
-    }
-
-
-    @Synchronized
-    private fun getCurrentPosition() {
-        playingTime?.text = viewModel.getCurrentPosition()
-    }
 
     private fun startPlayer() {
         playButton?.setImageResource(R.drawable.pause_button)
-        startTimer()
     }
 
     private fun pausePlayer() {

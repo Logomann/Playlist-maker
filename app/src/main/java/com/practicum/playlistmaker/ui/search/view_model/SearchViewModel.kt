@@ -28,7 +28,7 @@ class SearchViewModel(
                 .collect { data ->
                     if (data.first == null) {
                         screenStateLiveData.postValue(SearchScreenState.NoInternet)
-                    } else if (data.first!!.isEmpty()) {
+                    } else if (data.first.isNullOrEmpty()) {
                         screenStateLiveData.postValue(SearchScreenState.NoData)
                     } else {
                         screenStateLiveData.postValue(SearchScreenState.Content(data.first, null))
