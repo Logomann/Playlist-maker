@@ -89,6 +89,9 @@ class AudioPlayerViewModel(
     }
 
     fun getCurrentPosition(): String {
+        if (playerState == AudioPlayerState.PLAYING) {
+            screenStateLiveData.postValue(AudioPlayerState.PLAYING)
+        }
         return apInteractor.getCurrentPosition()
     }
 

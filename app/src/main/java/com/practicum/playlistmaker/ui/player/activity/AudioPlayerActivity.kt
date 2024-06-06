@@ -1,12 +1,11 @@
 package com.practicum.playlistmaker.ui.player.activity
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
@@ -14,6 +13,9 @@ import com.practicum.playlistmaker.util.TRACK_KEY
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.practicum.playlistmaker.ui.player.AudioPlayerState
 import com.practicum.playlistmaker.ui.player.view_model.AudioPlayerViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -28,8 +30,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private var playButton: ImageButton? = null
     private var playingTime: TextView? = null
-    private val handler = Handler(Looper.getMainLooper())
-    private val timeOfPlayingRunnable = Runnable { getCurrentPosition() }
+    private var timerJob: Job? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
@@ -37,7 +38,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         val trackCover = binding.trackCover
         val bckBtn = binding.audioPlayerArrow
         bckBtn.setOnClickListener {
-          finish()
+            finish()
         }
         playButton = binding.trackPlayBtn
         playButton?.isEnabled = false
@@ -117,20 +118,25 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     }
 
+    private fun startTimer() {
+        timerJob = lifecycleScope.launch {
+            delay(PLAYING_TIME_UPDATE_DELAY_MILLIS)
+            getCurrentPosition()
+        }
+    }
+
 
     @Synchronized
     private fun getCurrentPosition() {
         playingTime?.text = viewModel.getCurrentPosition()
-        handler.postDelayed(timeOfPlayingRunnable, PLAYING_TIME_UPDATE_DELAY_MILLIS)
     }
 
     private fun startPlayer() {
         playButton?.setImageResource(R.drawable.pause_button)
-        timeOfPlayingRunnable.run()
+        startTimer()
     }
 
     private fun pausePlayer() {
-        handler.removeCallbacks(timeOfPlayingRunnable)
         playButton?.setImageResource(R.drawable.track_play_btn)
     }
 
@@ -138,11 +144,6 @@ class AudioPlayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         viewModel.pause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        handler.removeCallbacks(timeOfPlayingRunnable)
     }
 
 }
