@@ -3,10 +3,12 @@ package com.practicum.playlistmaker.ui.search.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.domain.model.track.model.Track
 import com.practicum.playlistmaker.domain.search.SearchHistoryInteractor
 import com.practicum.playlistmaker.domain.search.SearchInteractor
 import com.practicum.playlistmaker.ui.search.SearchScreenState
+import kotlinx.coroutines.launch
 
 
 class SearchViewModel(
@@ -20,18 +22,21 @@ class SearchViewModel(
 
     private fun loadTrackList() {
         setScreenState(SearchScreenState.Loading)
-        searchInteractor.loadNewTrackList(
-            request = request,
-            onComplete = { data, _ ->
-                if (data == null) {
-                    screenStateLiveData.postValue(SearchScreenState.NoInternet)
-                } else if (data.isEmpty()) {
-                    screenStateLiveData.postValue(SearchScreenState.NoData)
-                } else {
-                    screenStateLiveData.postValue(SearchScreenState.Content(data, null))
-                }
+        viewModelScope.launch {
+            searchInteractor
+                .loadNewTrackList(request)
+                .collect { data ->
+                    if (data.first == null) {
+                        screenStateLiveData.postValue(SearchScreenState.NoInternet)
+                    } else if (data.first.isNullOrEmpty()) {
+                        screenStateLiveData.postValue(SearchScreenState.NoData)
+                    } else {
+                        screenStateLiveData.postValue(SearchScreenState.Content(data.first, null))
+                    }
 
-            })
+                }
+        }
+
     }
 
     fun setRefresh(isRefresh: Boolean) {
