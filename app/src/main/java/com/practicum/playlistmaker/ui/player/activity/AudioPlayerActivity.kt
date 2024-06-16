@@ -11,6 +11,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.util.TRACK_KEY
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.practicum.playlistmaker.ui.player.AudioPlayerScreenState
+import com.practicum.playlistmaker.ui.player.FavoriteState
 import com.practicum.playlistmaker.ui.player.view_model.AudioPlayerViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -78,6 +79,24 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         val country = binding.countryName
         country.text = track.country
+        val isFavorite = binding.likeBtn
+        if (track.isFavorite) {
+            isFavorite.setImageResource(R.drawable.like_btn_active)
+        }
+        isFavorite.setOnClickListener {
+            viewModel.onFavoriteClicked()
+        }
+        viewModel.isFavorite().observe(this) { favoriteState ->
+            when (favoriteState) {
+                FavoriteState.Favorite -> {
+                    isFavorite.setImageResource(R.drawable.like_btn_active)
+                }
+
+                FavoriteState.NotFavorite -> {
+                    isFavorite.setImageResource(R.drawable.like_btn)
+                }
+            }
+        }
         if (!url.isNullOrEmpty()) {
             viewModel.getScreenStateLiveData(url).observe(this) { screenState ->
                 when (screenState) {
@@ -100,7 +119,7 @@ class AudioPlayerActivity : AppCompatActivity() {
                         pausePlayer()
                     }
 
-                    else -> { }
+                    else -> {}
                 }
             }
         }

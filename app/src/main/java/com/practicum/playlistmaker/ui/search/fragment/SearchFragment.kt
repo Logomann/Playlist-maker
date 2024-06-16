@@ -62,7 +62,7 @@ class SearchFragment : Fragment() {
     private lateinit var searchHistory: LinearLayout
     private lateinit var clearHistoryButton: Button
     private lateinit var progressBar: ProgressBar
-    private var history = listOf<Track>()
+    private var listOfHistory = listOf<Track>()
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -74,6 +74,7 @@ class SearchFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        viewModel.getHistoryTrackList()
         _binding = FragmentSearchBinding.inflate(layoutInflater, container, false)
         editField = binding.searchEditField
         placeholderImage = binding.searchPlaceholderImage
@@ -92,7 +93,7 @@ class SearchFragment : Fragment() {
 
         editField.isFocusableInTouchMode = true
         val clearBtn = binding.searchClearBtn
-        history = viewModel.loadSavedTrackList()
+
 
         onTrackClickDebounce = debounce(
             CLICK_DEBOUNCE_DELAY,
@@ -112,7 +113,7 @@ class SearchFragment : Fragment() {
             editField.text.clear()
             listOfTracks.clear()
             adapter.notifyDataSetChanged()
-            if (history.isNotEmpty()) {
+            if (listOfHistory.isNotEmpty()) {
                 readTrackHistory()
             }
             viewModel.clearData()
@@ -128,7 +129,7 @@ class SearchFragment : Fragment() {
                 editText = editField.text.toString()
                 if (s?.isEmpty() == true) {
                     clearBtn.isVisible = false
-                    if (editField.hasFocus() && history.isNotEmpty()) {
+                    if (editField.hasFocus() && listOfHistory.isNotEmpty()) {
                         hidePlaceholder()
                         readTrackHistory()
                         listOfTracks.clear()
@@ -178,7 +179,13 @@ class SearchFragment : Fragment() {
                 }
             }
         }
+        listOfHistory = viewModel.history.value
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getHistoryTrackList()
     }
 
     private fun changeContentVisibility(loading: Boolean) {
@@ -209,7 +216,7 @@ class SearchFragment : Fragment() {
     private fun setOnFocusListener() {
         editField.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                if (history.isNotEmpty()) {
+                if (listOfHistory.isNotEmpty()) {
                     hidePlaceholder()
                     readTrackHistory()
                 }
@@ -253,12 +260,12 @@ class SearchFragment : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun readTrackHistory() {
+
         searchHistory.isVisible = true
         val historyTrackRecyclerView = binding.searchRecyclerHistory
         historyTrackRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        val listOfTracksHistory = viewModel.loadSavedTrackList()
 
-        val historyAdapter = TrackHistoryAdapter(listOfTracksHistory) {
+        val historyAdapter = TrackHistoryAdapter(listOfHistory) {
             setOnItemAction(it, false)
         }
         historyTrackRecyclerView.adapter = historyAdapter
