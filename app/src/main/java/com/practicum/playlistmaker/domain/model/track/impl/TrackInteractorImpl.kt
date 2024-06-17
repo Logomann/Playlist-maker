@@ -3,10 +3,7 @@ package com.practicum.playlistmaker.domain.model.track.impl
 import com.practicum.playlistmaker.domain.model.track.TrackInteractor
 import com.practicum.playlistmaker.domain.model.track.TrackRepository
 import com.practicum.playlistmaker.domain.model.track.model.Track
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
+
 
 class TrackInteractorImpl(private val repository: TrackRepository) : TrackInteractor {
     override fun getLargeImageUrl(url: String): String {
@@ -19,15 +16,14 @@ class TrackInteractorImpl(private val repository: TrackRepository) : TrackIntera
             track.trackId,
             track.trackName,
             track.artistName,
-            SimpleDateFormat(
-                "mm:ss", Locale.getDefault()
-            ).format(track.trackTimeMillis?.toFloat()),
+            track.trackTimeMillis,
             track.artworkUrl100,
             track.collectionName,
-            LocalDateTime.parse(track.releaseDate, DateTimeFormatter.ISO_DATE_TIME).year.toString(),
+            track.releaseDate,
             track.primaryGenreName,
             track.country,
-            track.previewUrl
+            track.previewUrl,
+            track.isFavorite
         )
     }
 }

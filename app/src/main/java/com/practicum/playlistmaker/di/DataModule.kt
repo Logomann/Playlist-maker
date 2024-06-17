@@ -4,8 +4,10 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
+import androidx.room.Room
 import com.google.gson.Gson
 import com.practicum.playlistmaker.data.NetworkClient
+import com.practicum.playlistmaker.data.db.AppDatabase
 import com.practicum.playlistmaker.data.player.AudioPlayer
 import com.practicum.playlistmaker.data.search.network.ITunesApi
 import com.practicum.playlistmaker.data.search.network.RetrofitNetworkClient
@@ -48,8 +50,14 @@ val dataModule = module {
     single<ExternalNavigator> {
         ExternalNavigatorImpl(get())
     }
-    single<SharedPreferences>{
+    single<SharedPreferences> {
         androidContext().getSharedPreferences(PREFERENCES, Application.MODE_PRIVATE)
+    }
+
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
 }

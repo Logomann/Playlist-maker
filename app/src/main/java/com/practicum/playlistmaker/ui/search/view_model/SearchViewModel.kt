@@ -8,6 +8,9 @@ import com.practicum.playlistmaker.domain.model.track.model.Track
 import com.practicum.playlistmaker.domain.search.SearchHistoryInteractor
 import com.practicum.playlistmaker.domain.search.SearchInteractor
 import com.practicum.playlistmaker.ui.search.SearchScreenState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
@@ -19,10 +22,20 @@ class SearchViewModel(
     private val screenStateLiveData = MutableLiveData<SearchScreenState>(SearchScreenState.Default)
     private var request = ""
     private var isRefresh = false
+    private val _history = MutableStateFlow<List<Track>>(emptyList())
+    val history = _history.asStateFlow()
+
+    fun getHistoryTrackList() {
+        viewModelScope.launch (Dispatchers.IO) {
+            val list = searchHistoryInteractor.loadSavedTrackList()
+            _history.value = list
+
+        }
+    }
 
     private fun loadTrackList() {
         setScreenState(SearchScreenState.Loading)
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             searchInteractor
                 .loadNewTrackList(request)
                 .collect { data ->
@@ -71,11 +84,9 @@ class SearchViewModel(
         searchHistoryInteractor.saveTrack(track)
     }
 
-    fun loadSavedTrackList(): List<Track> {
-        return searchHistoryInteractor.loadSavedTrackList()
-    }
 
     fun clearSavedTrackList() {
         searchHistoryInteractor.clearTrackList()
     }
+
 }

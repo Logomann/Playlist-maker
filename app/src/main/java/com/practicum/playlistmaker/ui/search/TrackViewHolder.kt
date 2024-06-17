@@ -7,8 +7,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.TrackViewBinding
 import com.practicum.playlistmaker.domain.model.track.model.Track
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class TrackViewHolder(private val binding: TrackViewBinding) :
     RecyclerView.ViewHolder(binding.root) {
@@ -16,10 +14,7 @@ class TrackViewHolder(private val binding: TrackViewBinding) :
         binding.nameOfSong.text = model.artistName
         binding.nameOfArtist.text = model.artistName
         if (!model.trackTimeMillis.isNullOrEmpty()) {
-            binding.playingTime.text = SimpleDateFormat(
-                "mm:ss",
-                Locale.getDefault()
-            ).format(model.trackTimeMillis.toFloat())
+            binding.playingTime.text = model.trackTimeMillis
         } else {
             binding.playingTime.text = itemView.context.getString(R.string.start_time_00)
         }
