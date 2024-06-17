@@ -74,7 +74,7 @@
         <item name="android:src">@drawable/search_placeholder_night</item>
     </style>
 
-    <style name="SearchPlaceholderNoInternetStyle">
+    <style name="SearchPlaceholderNoInternetStyle">x
         <item name="android:src">@drawable/search_placeholder_no_internet_night</item>
     </style>
 
@@ -87,8 +87,13 @@
         <item name="android:textSize">14sp</item>
         <item name="android:letterSpacing">0</item>
     </style>
+
     <style name="AudioPlayerButtonStyle">
 
         <item name="tint">@color/white</item>
+    </style>
+
+    <style name="LikeButtonStyle">
+        <item name="android:background">@drawable/like_btn_state_list_night</item>
     </style>
 </resources>

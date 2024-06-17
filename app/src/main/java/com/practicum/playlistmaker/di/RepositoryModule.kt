@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.di
 
-import com.practicum.playlistmaker.data.medialibrary.impl.FavoriteTracksRepositoryImpl
+import com.practicum.playlistmaker.data.converters.TrackDbConverter
+import com.practicum.playlistmaker.data.db.impl.FavoriteTracksRepositoryImpl
 import com.practicum.playlistmaker.data.medialibrary.impl.PlaylistsRepositoryImpl
 import com.practicum.playlistmaker.data.player.AudioPlayerRepositoryImpl
 import com.practicum.playlistmaker.data.search.impl.SearchHistoryRepositoryImpl
@@ -8,7 +9,7 @@ import com.practicum.playlistmaker.data.search.impl.SearchRepositoryImpl
 import com.practicum.playlistmaker.data.search.impl.TrackRepositoryImpl
 import com.practicum.playlistmaker.data.settings.impl.SettingsRepositoryImpl
 import com.practicum.playlistmaker.data.sharing.impl.ExternalNavigatorImpl
-import com.practicum.playlistmaker.domain.medialibrary.FavoriteTracksRepository
+import com.practicum.playlistmaker.domain.db.FavoriteTracksRepository
 import com.practicum.playlistmaker.domain.medialibrary.PlaylistsRepository
 import com.practicum.playlistmaker.domain.model.track.TrackRepository
 import com.practicum.playlistmaker.domain.player.AudioPlayerRepository
@@ -21,10 +22,10 @@ import org.koin.dsl.module
 val repositoryModule = module {
 
     single<SearchRepository> {
-        SearchRepositoryImpl(get())
+        SearchRepositoryImpl(get(), get())
     }
     single<SearchHistoryRepository> {
-        SearchHistoryRepositoryImpl(get(), get())
+        SearchHistoryRepositoryImpl(get(), get(), get())
     }
     single<TrackRepository> {
         TrackRepositoryImpl(get())
@@ -33,17 +34,17 @@ val repositoryModule = module {
         AudioPlayerRepositoryImpl(get())
     }
     single<SettingsRepository> {
-        SettingsRepositoryImpl(get(),get())
+        SettingsRepositoryImpl(get(), get())
     }
     single<ExternalNavigator> {
         ExternalNavigatorImpl(get())
     }
     single<FavoriteTracksRepository> {
-        FavoriteTracksRepositoryImpl(get(),get())
+        FavoriteTracksRepositoryImpl(get(), get())
     }
     single<PlaylistsRepository> {
-        PlaylistsRepositoryImpl(get(),get())
+        PlaylistsRepositoryImpl(get(), get())
     }
-
+    factory { TrackDbConverter() }
 
 }

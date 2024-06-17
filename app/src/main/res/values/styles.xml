@@ -94,6 +94,10 @@
         <item name="android:background">@color/settings_background</item>
     </style>
 
+    <style name="LikeButtonStyle">
+        <item name="android:background">@drawable/like_btn_state_list</item>
+    </style>
+
     <style name="AudioPlayerDataStyle">
         <item name="android:fontFamily">@font/ys_display_reg</item>
         <item name="android:textColor">@color/settings_text_color</item>
@@ -115,6 +119,7 @@
         <item name="android:textFontWeight">500</item>
         <item name="android:letterSpacing">0</item>
     </style>
+
     <style name="TabLayoutStyle">
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">14sp</item>
@@ -123,10 +128,13 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:gravity">center</item>
     </style>
+
     <style name="BottomNavigationStyle">
         <item name="itemTextAppearanceActive">@style/TextAppearanceBottomNavigationViewActive</item>
-        <item name="itemTextAppearanceInactive">@style/TextAppearanceBottomNavigationViewInactive</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearanceBottomNavigationViewInactive
+        </item>
     </style>
+
     <style name="TextAppearanceBottomNavigationViewActive">
         <item name="android:fontFamily">@font/ys_display_reg</item>
         <item name="android:textSize">12sp</item>
@@ -134,6 +142,7 @@
         <item name="android:textFontWeight">400</item>
         <item name="android:gravity">center</item>
     </style>
+
     <style name="TextAppearanceBottomNavigationViewInactive">
         <item name="android:fontFamily">@font/ys_display_reg</item>
         <item name="android:textSize">12sp</item>

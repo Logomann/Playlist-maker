@@ -6,7 +6,7 @@ import com.practicum.playlistmaker.domain.search.SearchHistoryRepository
 
 class SearchHistoryInteractorImpl(private val repository: SearchHistoryRepository) :
     SearchHistoryInteractor {
-    override fun loadSavedTrackList(): List<Track> {
+    override suspend fun loadSavedTrackList(): List<Track>  {
         return repository.loadSavedTrackList()
     }
 

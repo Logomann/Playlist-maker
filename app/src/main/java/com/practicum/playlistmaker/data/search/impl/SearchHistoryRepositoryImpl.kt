@@ -4,18 +4,26 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.practicum.playlistmaker.data.db.AppDatabase
 import com.practicum.playlistmaker.util.TRACK_KEY
 import com.practicum.playlistmaker.domain.model.track.model.Track
 import com.practicum.playlistmaker.domain.search.SearchHistoryRepository
 
+
 class SearchHistoryRepositoryImpl(
     private val sharedPreferences: SharedPreferences,
-    private val gson: Gson
+    private val gson: Gson,
+    private val appDatabase: AppDatabase
 ) : SearchHistoryRepository {
 
     private val listOfTracks = read()
-    override fun loadSavedTrackList(): List<Track> {
-        return read()
+
+    override suspend fun loadSavedTrackList(): List<Track> {
+        val favoriteList = appDatabase.trackDao().getTracksId()
+        for (track in listOfTracks) {
+            track.isFavorite = favoriteList.contains(track.trackId)
+        }
+        return listOfTracks
     }
 
     override fun saveTrack(track: Track) {
