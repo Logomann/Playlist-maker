@@ -81,7 +81,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         country.text = track.country
         val isFavorite = binding.likeBtn
         if (track.isFavorite) {
-            isFavorite.setImageResource(R.drawable.like_btn_active)
+            isFavorite.isPressed = true
         }
         isFavorite.setOnClickListener {
             viewModel.onFavoriteClicked()
@@ -89,11 +89,11 @@ class AudioPlayerActivity : AppCompatActivity() {
         viewModel.isFavorite().observe(this) { favoriteState ->
             when (favoriteState) {
                 FavoriteState.Favorite -> {
-                    isFavorite.setImageResource(R.drawable.like_btn_active)
+                    isFavorite.isPressed = true
                 }
 
                 FavoriteState.NotFavorite -> {
-                    isFavorite.setImageResource(R.drawable.like_btn)
+                    isFavorite.isPressed = false
                 }
             }
         }
