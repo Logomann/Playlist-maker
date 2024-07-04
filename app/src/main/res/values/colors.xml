@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="settings_text_color">#1A1B22</color>
@@ -9,9 +9,12 @@
     <color name="search_background">#E6E8EB</color>
     <color name="search_hint">#AEAFB4</color>
     <color name="switch_color_activated">#3772E7</color>
-    <color name="audio_player_text">#AEAFB4</color>
+    <color name="grey">#AEAFB4</color>
     <color name="progress_bar_blue">#3772E7</color>
     <color name="bottom_nav_color_activated">#3772E7</color>
     <color name="bottom_nav_color">#1A1B22</color>
     <color name="bottom_nav_background">#FFFFFF</color>
+    <color name="bottom_sheet_top_color">#E6E8EB</color>
+    <color name="playlist_tracks_color">#AEAFB4</color>
+
 </resources>
