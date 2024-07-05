@@ -7,6 +7,7 @@ import com.practicum.playlistmaker.data.converters.PlaylistDbConverter
 import com.practicum.playlistmaker.data.db.AppDatabase
 import com.practicum.playlistmaker.domain.medialibrary.NewPlaylistRepository
 import com.practicum.playlistmaker.domain.model.Playlist
+import com.practicum.playlistmaker.util.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.io.File
@@ -28,7 +29,7 @@ class NewPlaylistRepositoryImpl(
     override fun saveImage(filePath: String): Flow<String> = flow {
         val file = File(
             context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-            (System.currentTimeMillis() / 1000L).toString() + ".png"
+            (System.currentTimeMillis() / 1000L).toString() + Constants.PICTURE_PNG
         )
         val fileStream = context.contentResolver.openInputStream(filePath.toUri())
         file.writeBytes(fileStream!!.readBytes())

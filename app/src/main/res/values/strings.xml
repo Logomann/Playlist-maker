@@ -42,13 +42,18 @@
     <string name="data_lost_message">All unsaved data will be lost</string>
     <string name="cancel">Cancel</string>
     <string name="complete">Complete</string>
-    <string name="track">track</string>
-    <string name="tracks">tracks</string>
-    <string name="tracks_5">tracks</string>
     <string name="playlist">Playlist</string>
     <string name="created">created</string>
     <string name="add_to_playlist">Add to playlist</string>
     <string name="track_added">Added to playlist %s</string>
     <string name="track_already_in_playlist">The track has already been added to the playlist %s</string>
+    <string name="ok">OK</string>
+    <plurals name="track_quantity">
+        <item quantity="zero">tracks</item>
+        <item quantity="one">track</item>
+        <item quantity="few">tracks</item>
+        <item quantity="many">tracks</item>
+        <item quantity="other">tracks</item>
+    </plurals>
 
 </resources>

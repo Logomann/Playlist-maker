@@ -1,6 +1,8 @@
 package com.practicum.playlistmaker.data.medialibrary.impl
 
 
+import android.content.Context
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.data.converters.PlaylistDbConverter
 import com.practicum.playlistmaker.data.converters.TracksInPlaylistsConverter
 import com.practicum.playlistmaker.data.db.AppDatabase
@@ -14,7 +16,8 @@ import kotlinx.coroutines.flow.flow
 class PlaylistsRepositoryImpl(
     private val appDatabase: AppDatabase,
     private val playlistDbConverter: PlaylistDbConverter,
-    private val tracksInPlaylistsConverter: TracksInPlaylistsConverter
+    private val tracksInPlaylistsConverter: TracksInPlaylistsConverter,
+    private val context: Context
 ) : PlaylistsRepository {
 
     override fun getPlayLists(): Flow<List<Playlist>> = flow {
@@ -26,7 +29,7 @@ class PlaylistsRepositoryImpl(
         appDatabase.tracksInPlaylistsDao().insertTrack(tracksInPlaylistsConverter.map(track))
         playlist.plTracksIDs.add(track.trackId)
         appDatabase.playlistDao().updatePlaylist(playlistDbConverter.map(playlist))
-        emit("Ok")
+        emit(context.getString(R.string.ok))
     }
 
     private fun convertFromPlaylistEntity(playlists: List<PlaylistEntity>): List<Playlist> {

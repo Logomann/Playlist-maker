@@ -191,12 +191,16 @@ class NewPlaylistFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        _binding = null
         if (requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view) != null) {
             requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).visibility =
                 View.VISIBLE
         }
         super.onDestroy()
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
     private fun isDataAvailable(): Boolean {

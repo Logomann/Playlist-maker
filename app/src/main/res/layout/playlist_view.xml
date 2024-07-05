@@ -6,7 +6,6 @@
     android:layout_height="wrap_content"
     android:background="@null"
     android:layout_marginBottom="@dimen/margin_16dp"
-    android:paddingHorizontal="8dp"
     card_view:cardElevation="0dp">
 
     <LinearLayout

@@ -24,11 +24,7 @@ class PlaylistViewHolder(private val binding: PlaylistViewBinding) :
 
         binding.newPlaylistName.text = playlist.plName
         val size = playlist.plTracksIDs.size
-        val track = when (size) {
-            1 -> binding.root.context.getString(R.string.track)
-            in 2..4 -> binding.root.context.getString(R.string.tracks)
-            else -> binding.root.context.getString(R.string.tracks_5)
-        }
+        val track = binding.root.context.resources.getQuantityString(R.plurals.track_quantity,size)
         binding.playlistSize.text = String.format(Locale.US, "%d %s", size, track)
     }
 }
