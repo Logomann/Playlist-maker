@@ -6,4 +6,5 @@ sealed class PlaylistsScreenState {
     data class Content(val playlist: List<Playlist>) : PlaylistsScreenState()
     data object Default : PlaylistsScreenState()
     data object NoData : PlaylistsScreenState()
+    data object Loading : PlaylistsScreenState()
 }

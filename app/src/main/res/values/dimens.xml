@@ -32,4 +32,5 @@
     <dimen name="margin_16dp">16dp</dimen>
     <dimen name="margin_24dp">24dp</dimen>
     <dimen name="_44dp">44dp</dimen>
+    <dimen name="radius_8px">8dp</dimen>
 </resources>

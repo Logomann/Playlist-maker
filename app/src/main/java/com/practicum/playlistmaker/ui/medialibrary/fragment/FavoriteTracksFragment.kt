@@ -18,12 +18,12 @@ import com.practicum.playlistmaker.ui.medialibrary.FavoriteTracksScreenState
 import com.practicum.playlistmaker.ui.medialibrary.view_model.FavoriteTracksViewModel
 import com.practicum.playlistmaker.ui.search.TrackAdapter
 import com.practicum.playlistmaker.util.TRACK_KEY
-import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavoriteTracksFragment : Fragment() {
     private var _binding: FragmentFavoriteTracksBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by activityViewModel<FavoriteTracksViewModel>()
+    private val viewModel by viewModel<FavoriteTracksViewModel>()
     private var listOfTracks = ArrayList<Track>()
     private val adapter = TrackAdapter(listOfTracks) {
         setOnItemAction(it)

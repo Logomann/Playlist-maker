@@ -14,7 +14,6 @@ import org.koin.core.context.startKoin
 const val PREFERENCES = "preferences"
 const val THEME_KEY = "key_for_theme"
 const val TRACK_KEY = "TRACK_KEY"
-const val PLAYLISTS = "PLAYLISTS"
 
 class App : Application() {
 
