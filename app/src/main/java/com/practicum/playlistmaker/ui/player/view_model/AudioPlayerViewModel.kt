@@ -6,9 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.domain.db.FavoriteTracksInteractor
+import com.practicum.playlistmaker.domain.medialibrary.PlaylistsInteractor
+import com.practicum.playlistmaker.domain.model.Playlist
 import com.practicum.playlistmaker.domain.model.track.TrackInteractor
 import com.practicum.playlistmaker.domain.model.track.model.Track
 import com.practicum.playlistmaker.domain.player.AudioPlayerInteractor
+import com.practicum.playlistmaker.ui.medialibrary.PlaylistsScreenState
+import com.practicum.playlistmaker.ui.player.AddPlaylistState
 import com.practicum.playlistmaker.ui.player.AudioPlayerScreenState
 import com.practicum.playlistmaker.ui.player.AudioPlayerState
 import com.practicum.playlistmaker.ui.player.FavoriteState
@@ -22,7 +26,8 @@ private const val PLAYING_TIME_UPDATE_DELAY_MILLIS = 300L
 class AudioPlayerViewModel(
     private val apInteractor: AudioPlayerInteractor,
     private val trackInteractor: TrackInteractor,
-    private val favoriteTracksInteractor: FavoriteTracksInteractor
+    private val favoriteTracksInteractor: FavoriteTracksInteractor,
+    private val playlistsInteractor: PlaylistsInteractor
 ) : ViewModel() {
     private val screenStateLiveData =
         MutableLiveData<AudioPlayerScreenState>(AudioPlayerScreenState.Default)
@@ -31,6 +36,23 @@ class AudioPlayerViewModel(
     private var timerJob: Job? = null
     private val favoriteStateLiveData = MutableLiveData<FavoriteState>()
     private lateinit var track: Track
+    private val playlistsBottomSheetLiveData =
+        MutableLiveData<PlaylistsScreenState>(PlaylistsScreenState.Default)
+    private val addedTrack = MutableLiveData<AddPlaylistState>()
+
+    fun getPlaylists() {
+        viewModelScope.launch(Dispatchers.IO) {
+            playlistsInteractor
+                .getPlaylists()
+                .collect { playlists ->
+                    playlistsBottomSheetLiveData.postValue(PlaylistsScreenState.Content(playlists))
+                }
+        }
+    }
+
+    fun render(): LiveData<PlaylistsScreenState> {
+        return playlistsBottomSheetLiveData
+    }
 
     fun getScreenStateLiveData(url: String): LiveData<AudioPlayerScreenState> {
         if (!isPrepared) {
@@ -64,6 +86,24 @@ class AudioPlayerViewModel(
             favoriteStateLiveData.postValue(FavoriteState.NotFavorite)
         }
         return favoriteStateLiveData
+    }
+
+    fun onPlaylistClicked(playlist: Playlist) {
+        if (playlist.plTracksIDs.contains(track.trackId)) {
+            addedTrack.postValue(AddPlaylistState.AlreadyExist(playlist.plName))
+        } else {
+            viewModelScope.launch(Dispatchers.IO) {
+                playlistsInteractor
+                    .addTrackToPlaylist(track, playlist)
+                    .collect {
+                        addedTrack.postValue(AddPlaylistState.Added(playlist.plName))
+                    }
+            }
+        }
+    }
+
+    fun onPlayListClickedRender(): LiveData<AddPlaylistState> {
+        return addedTrack
     }
 
     fun onFavoriteClicked() {
