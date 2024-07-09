@@ -19,4 +19,20 @@ class TracksInPlaylistsConverter {
             track.isFavorite
         )
     }
+
+    fun map(trackEntity: TracksInPlaylistsEntity): Track {
+        return Track(
+            trackEntity.trackId,
+            trackEntity.trackName,
+            trackEntity.artistName,
+            trackEntity.trackTimeMillis,
+            trackEntity.artworkUrl100,
+            trackEntity.collectionName,
+            trackEntity.releaseDate,
+            trackEntity.primaryGenreName,
+            trackEntity.country,
+            trackEntity.previewUrl,
+            trackEntity.isFavorite
+        )
+    }
 }

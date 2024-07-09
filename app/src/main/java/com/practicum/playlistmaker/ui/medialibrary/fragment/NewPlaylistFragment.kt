@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.navigation.fragment.findNavController
@@ -29,15 +30,15 @@ import com.practicum.playlistmaker.ui.medialibrary.view_model.NewPlaylistViewMod
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class NewPlaylistFragment : Fragment() {
+open class NewPlaylistFragment : Fragment() {
     private var _binding: FragmentNewPlaylistBinding? = null
-    private val binding get() = _binding!!
-    private val viewModel by viewModel<NewPlaylistViewModel>()
+    protected val binding get() = _binding!!
+    open val viewModel by viewModel<NewPlaylistViewModel>()
     private lateinit var editTextName: TextInputLayout
     private lateinit var editTextDescription: TextInputLayout
     private var isCoverSet = false
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
-    private lateinit var coverUri: Uri
+    lateinit var coverUri: Uri
 
 
     override fun onCreateView(
@@ -79,17 +80,7 @@ class NewPlaylistFragment : Fragment() {
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
-                    val cornerRadius = resources.getDimensionPixelSize(R.dimen.track_cover_radius)
-                    Glide.with(this)
-                        .load(uri)
-                        .fitCenter()
-                        .transform(RoundedCorners(cornerRadius))
-                        .placeholder(R.drawable.placeholder)
-                        .into(binding.newPlaylistCover)
-                    binding.newPlaylistCover.setBackgroundResource(0)
-                    binding.newPlaylistCover.scaleType = ImageView.ScaleType.FIT_XY
-                    isCoverSet = true
-                    coverUri = uri
+                    setCover(uri.toString())
                 }
             }
         binding.newPlaylistCover.setOnClickListener {
@@ -148,6 +139,20 @@ class NewPlaylistFragment : Fragment() {
                 NewPlaylistScreenState.Loading -> {}
             }
         }
+    }
+
+    protected fun setCover(path: String) {
+        val cornerRadius = resources.getDimensionPixelSize(R.dimen.track_cover_radius)
+        Glide.with(this)
+            .load(path)
+            .fitCenter()
+            .transform(RoundedCorners(cornerRadius))
+            .placeholder(R.drawable.placeholder)
+            .into(binding.newPlaylistCover)
+        binding.newPlaylistCover.setBackgroundResource(0)
+        binding.newPlaylistCover.scaleType = ImageView.ScaleType.FIT_XY
+        isCoverSet = true
+        coverUri = path.toUri()
     }
 
     @SuppressLint("ResourceType")
@@ -232,4 +237,6 @@ class NewPlaylistFragment : Fragment() {
 
         }
     }
+
+
 }

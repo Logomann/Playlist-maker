@@ -16,5 +16,6 @@
     <color name="bottom_nav_background">#FFFFFF</color>
     <color name="bottom_sheet_top_color">#E6E8EB</color>
     <color name="playlist_tracks_color">#AEAFB4</color>
+    <color name="playlist_background">#E6E8EB</color>
 
 </resources>

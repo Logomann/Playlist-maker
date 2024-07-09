@@ -11,7 +11,7 @@ import com.practicum.playlistmaker.ui.medialibrary.NewPlaylistScreenState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class NewPlaylistViewModel(private val interactor: NewPlaylistInteractor) : ViewModel() {
+open class NewPlaylistViewModel(private val interactor: NewPlaylistInteractor) : ViewModel() {
 
     private val screenStateLiveData = MutableLiveData<NewPlaylistScreenState>()
 

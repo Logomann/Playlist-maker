@@ -25,6 +25,7 @@
             app:tint="@color/settings_text_color" />
 
         <TextView
+            android:id="@+id/new_playlist_top_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/ys_display_medium"
