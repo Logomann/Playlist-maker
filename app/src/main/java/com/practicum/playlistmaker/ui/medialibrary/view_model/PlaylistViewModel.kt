@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.ArrayList
 import java.util.Locale
-import kotlin.time.Duration.Companion.minutes
+
 
 class PlaylistViewModel(private val playlistInteractor: PlaylistsInteractor) : ViewModel() {
 
@@ -84,18 +84,17 @@ class PlaylistViewModel(private val playlistInteractor: PlaylistsInteractor) : V
     }
 
     private fun calculateTime(tracks: List<Track>): Int {
-        var time = 0
+        var time = 0L
         for (track in tracks) {
             val format = SimpleDateFormat("mm:ss", Locale.getDefault())
             val date = format.parse(track.trackTimeMillis.toString())
-            val dur = date?.time?.minutes?.inWholeMinutes
-            time += SimpleDateFormat(
-                "m",
-                Locale.getDefault()
-            ).format(dur).toInt()
-
+            time += date?.time ?: 0
         }
-        return time
+
+        return SimpleDateFormat(
+            "m",
+            Locale.getDefault()
+        ).format(time).toInt()
     }
 
     fun deletePlaylist() {
