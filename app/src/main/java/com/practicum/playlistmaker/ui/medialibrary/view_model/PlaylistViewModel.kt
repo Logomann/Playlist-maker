@@ -24,8 +24,9 @@ class PlaylistViewModel(private val playlistInteractor: PlaylistsInteractor) : V
     private val listOfTracks = ArrayList<Track>()
     private val screenStateLiveData = MutableLiveData<PlaylistScreenState>()
 
-    private fun getTracks() {
+    fun getTracks() {
         viewModelScope.launch(Dispatchers.IO) {
+            getPlaylist(playlistId = playlist.plId).await()
             playlistInteractor
                 .getAddedTracks(playlist.plTracksIDs)
                 .collect { tracks ->
@@ -47,16 +48,14 @@ class PlaylistViewModel(private val playlistInteractor: PlaylistsInteractor) : V
         val type = object : TypeToken<Playlist>() {}.type
         playlist = Gson().fromJson(json, type)
         getTracks()
-        getPlaylist(playlist.plId)
     }
 
-    private fun getPlaylist(playlistId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            playlistInteractor.getPlaylist(playlistId).collect { list ->
-                playlist = list
-            }
+    private fun getPlaylist(playlistId: Int) = viewModelScope.async(Dispatchers.IO) {
+        playlistInteractor.getPlaylist(playlistId).collect { list ->
+            playlist = list
         }
     }
+
 
     fun render(): LiveData<PlaylistScreenState> {
         return screenStateLiveData

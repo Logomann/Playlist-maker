@@ -54,6 +54,7 @@ class PlaylistFragment : Fragment() {
             requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).isVisible =
                 false
         }
+        viewModel.getTracks()
     }
 
     override fun onCreateView(
