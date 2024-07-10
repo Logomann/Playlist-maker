@@ -14,6 +14,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.navigation.fragment.findNavController
@@ -48,8 +49,8 @@ open class NewPlaylistFragment : Fragment() {
     ): View {
         _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
         if (requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view) != null) {
-            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).visibility =
-                View.GONE
+            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).isVisible =
+                false
         }
         editTextName = binding.newPlaylistName
         editTextDescription = binding.newPlaylistDescription
@@ -197,8 +198,8 @@ open class NewPlaylistFragment : Fragment() {
 
     override fun onDestroy() {
         if (requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view) != null) {
-            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).visibility =
-                View.VISIBLE
+            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).isVisible =
+                true
         }
         super.onDestroy()
     }
