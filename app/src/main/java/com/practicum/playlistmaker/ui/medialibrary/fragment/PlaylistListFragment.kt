@@ -60,6 +60,8 @@ class PlaylistListFragment : Fragment() {
 
                 PlaylistsScreenState.Default -> {}
                 PlaylistsScreenState.NoData -> {
+                    playlists.clear()
+                    adapter.notifyDataSetChanged()
                     setPlaceholder()
                 }
 
