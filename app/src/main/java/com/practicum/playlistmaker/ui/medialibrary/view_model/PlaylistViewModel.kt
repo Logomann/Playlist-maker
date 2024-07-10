@@ -4,11 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.domain.medialibrary.PlaylistsInteractor
 import com.practicum.playlistmaker.domain.model.Playlist
 import com.practicum.playlistmaker.domain.model.track.model.Track
 import com.practicum.playlistmaker.ui.medialibrary.PlaylistScreenState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.ArrayList
@@ -21,29 +24,29 @@ class PlaylistViewModel(private val playlistInteractor: PlaylistsInteractor) : V
     private val listOfTracks = ArrayList<Track>()
     private val screenStateLiveData = MutableLiveData<PlaylistScreenState>()
 
-    fun getPlaylist(playlistId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
+    private fun getTracks() {
+        viewModelScope.launch {
             playlistInteractor
-                .getPlaylist(playlistId)
-                .collect { data ->
-                    playlist = data
-                    playlistInteractor
-                        .getAddedTracks(data.plTracksIDs)
-                        .collect { tracks ->
-                            listOfTracks.clear()
-                            listOfTracks.addAll(tracks)
-                            screenStateLiveData.postValue(
-                                PlaylistScreenState.Content(
-                                    data,
-                                    calculateTime(tracks),
-                                    tracks
-                                )
-                            )
-                        }
-
+                .getAddedTracks(playlist.plTracksIDs)
+                .collect { tracks ->
+                    listOfTracks.clear()
+                    listOfTracks.addAll(tracks)
+                    screenStateLiveData.postValue(
+                        PlaylistScreenState.Content(
+                            playlist,
+                            calculateTime(tracks),
+                            tracks
+                        )
+                    )
                 }
         }
 
+    }
+
+    fun setPlaylist(json: String) {
+        val type = object : TypeToken<Playlist>() {}.type
+        playlist = Gson().fromJson(json, type)
+        getTracks()
     }
 
     fun render(): LiveData<PlaylistScreenState> {
@@ -70,7 +73,6 @@ class PlaylistViewModel(private val playlistInteractor: PlaylistsInteractor) : V
     }
 
     fun sharePlaylist(sumOfTracks: String) {
-        playlist.plName
         val list =
             StringBuilder().append(playlist.plName).append("\n").append(playlist.plDescription)
                 .append("\n").append("${playlist.plTracksIDs.size} $sumOfTracks").append("\n")
@@ -99,12 +101,14 @@ class PlaylistViewModel(private val playlistInteractor: PlaylistsInteractor) : V
 
     fun deletePlaylist() {
         viewModelScope.launch(Dispatchers.IO) {
-            playlistInteractor
-                .deletePlaylist(playlist)
-                .collect {
-                    screenStateLiveData.postValue(PlaylistScreenState.Deleted)
-                }
+            delete(playlist).await()
+            screenStateLiveData.postValue(PlaylistScreenState.Deleted)
         }
+
+    }
+
+    private fun delete(playlist: Playlist) = viewModelScope.async {
+        playlistInteractor.deletePlaylist(playlist)
 
     }
 

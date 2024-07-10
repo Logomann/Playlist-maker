@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistListBinding
 import com.practicum.playlistmaker.domain.model.Playlist
@@ -90,9 +91,10 @@ class PlaylistListFragment : Fragment() {
     }
 
     private fun setOnClickItem(playlist: Playlist) {
+        val json = Gson().toJson(playlist)
         findNavController().navigate(
             R.id.action_mediaLibraryFragment_to_playlistFragment, bundleOf(
-                PLAYLIST_KEY to playlist.plId
+                PLAYLIST_KEY to json
             )
         )
     }

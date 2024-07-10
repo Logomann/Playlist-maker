@@ -51,8 +51,8 @@ class PlaylistFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         if (requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view) != null) {
-            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).visibility =
-                View.GONE
+            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).isVisible =
+                false
         }
     }
 
@@ -63,10 +63,10 @@ class PlaylistFragment : Fragment() {
     ): View {
         _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
         if (requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view) != null) {
-            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).visibility =
-                View.GONE
+            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).isVisible =
+                false
         }
-        arguments?.let { viewModel.getPlaylist(it.getInt(PLAYLIST_KEY)) }
+        arguments?.let { viewModel.setPlaylist(it.getString(PLAYLIST_KEY).toString()) }
         return binding.root
     }
 

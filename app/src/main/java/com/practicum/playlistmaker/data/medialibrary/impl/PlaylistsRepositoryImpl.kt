@@ -43,6 +43,19 @@ class PlaylistsRepositoryImpl(
     }
 
     override fun getAddedTracks(listOfTracksId: List<Int>): Flow<List<Track>> = flow {
+        val trackList = setFavoriteTracksInPlaylist()
+        val listOfAddedTracks = mutableListOf<Track>()
+        for (trackId in listOfTracksId) {
+            trackList.forEach {
+                if (it.trackId == trackId) {
+                    listOfAddedTracks.add(it)
+                }
+            }
+        }
+        emit(listOfAddedTracks)
+    }
+
+    private suspend fun setFavoriteTracksInPlaylist(): List<Track> {
         val trackList = appDatabase.tracksInPlaylistsDao().getTracks()
             .map { track -> tracksInPlaylistsConverter.map(track) }
         val favoriteTracks = convertFromTrackEntity(appDatabase.trackDao().getTracks())
@@ -53,17 +66,7 @@ class PlaylistsRepositoryImpl(
                 }
             }
         }
-
-        val listOfAddedTracks = mutableListOf<Track>()
-
-        for (trackId in listOfTracksId) {
-            trackList.forEach {
-                if (it.trackId == trackId) {
-                    listOfAddedTracks.add(it)
-                }
-            }
-        }
-        emit(listOfAddedTracks)
+        return trackList
     }
 
     override fun deleteTrackFromPlaylist(track: Track, playlist: Playlist): Flow<Playlist> = flow {
@@ -83,7 +86,7 @@ class PlaylistsRepositoryImpl(
         )
     }
 
-    override fun deletePlaylist(playlist: Playlist): Flow<String> = flow {
+    override suspend fun deletePlaylist(playlist: Playlist) {
         appDatabase.playlistDao().deletePlaylist(playlistDbConverter.map(playlist))
         val listOfTracks = playlist.plTracksIDs
         for (it in listOfTracks) {
@@ -91,8 +94,8 @@ class PlaylistsRepositoryImpl(
                 tracksInPlaylistsConverter.map(appDatabase.tracksInPlaylistsDao().getTrack(it))
             checkTrackInPlaylists(track)
         }
-        emit(context.getString(R.string.ok))
     }
+
 
     private suspend fun checkTrackInPlaylists(track: Track) {
         val playlists = convertFromPlaylistEntity(appDatabase.playlistDao().getPlaylists())

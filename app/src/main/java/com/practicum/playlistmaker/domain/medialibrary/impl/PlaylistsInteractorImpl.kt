@@ -33,7 +33,7 @@ class PlaylistsInteractorImpl(private val playlistsRepository: PlaylistsReposito
         playlistsRepository.sharePlaylist(playlist)
     }
 
-    override fun deletePlaylist(playlist: Playlist): Flow<String> {
+    override suspend fun deletePlaylist(playlist: Playlist) {
         return playlistsRepository.deletePlaylist(playlist)
     }
 

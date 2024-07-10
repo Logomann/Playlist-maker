@@ -29,9 +29,9 @@ class EditPlaylistFragment : NewPlaylistFragment() {
         viewModel.renderState().observe(viewLifecycleOwner) { state ->
             when (state) {
                 is EditPlaylistScreenState.Content -> {
-                    setCover(state.playlist.plCover!!)
-                    binding.newPlaylistName.editText!!.setText(state.playlist.plName)
-                    binding.newPlaylistDescription.editText!!.setText(state.playlist.plDescription)
+                    setCover(state.playlist.plCover.toString())
+                    binding.newPlaylistName.editText?.setText(state.playlist.plName)
+                    binding.newPlaylistDescription.editText?.setText(state.playlist.plDescription)
                     binding.newPlaylistTopTv.text = getString(R.string.edit)
                     binding.newPlaylistCreateBtn.text = getString(R.string.save)
                     binding.newPlaylistCreateBtn.isEnabled = true
