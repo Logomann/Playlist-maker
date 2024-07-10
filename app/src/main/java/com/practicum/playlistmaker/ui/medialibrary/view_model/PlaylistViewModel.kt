@@ -20,8 +20,7 @@ import java.util.Locale
 
 class PlaylistViewModel(private val playlistInteractor: PlaylistsInteractor) : ViewModel() {
 
-    private lateinit var _playlist: Playlist
-    private val playlist get() = _playlist
+    private lateinit var playlist: Playlist
     private val listOfTracks = ArrayList<Track>()
     private val screenStateLiveData = MutableLiveData<PlaylistScreenState>()
 
@@ -46,8 +45,17 @@ class PlaylistViewModel(private val playlistInteractor: PlaylistsInteractor) : V
 
     fun setPlaylist(json: String) {
         val type = object : TypeToken<Playlist>() {}.type
-        _playlist = Gson().fromJson(json, type)
+        playlist = Gson().fromJson(json, type)
         getTracks()
+        getPlaylist(playlist.plId)
+    }
+
+    private fun getPlaylist(playlistId: Int) {
+        viewModelScope.launch {
+            playlistInteractor.getPlaylist(playlistId).collect { list ->
+                playlist = list
+            }
+        }
     }
 
     fun render(): LiveData<PlaylistScreenState> {
@@ -60,7 +68,7 @@ class PlaylistViewModel(private val playlistInteractor: PlaylistsInteractor) : V
             playlistInteractor
                 .deleteTrackFromPlaylist(track, playlist)
                 .collect { data ->
-                    _playlist = data
+                    playlist = data
                     screenStateLiveData.postValue(
                         PlaylistScreenState.Content(
                             data,
