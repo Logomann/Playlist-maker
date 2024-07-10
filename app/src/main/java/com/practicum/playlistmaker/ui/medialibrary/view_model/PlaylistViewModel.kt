@@ -25,7 +25,7 @@ class PlaylistViewModel(private val playlistInteractor: PlaylistsInteractor) : V
     private val screenStateLiveData = MutableLiveData<PlaylistScreenState>()
 
     private fun getTracks() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             playlistInteractor
                 .getAddedTracks(playlist.plTracksIDs)
                 .collect { tracks ->
@@ -51,7 +51,7 @@ class PlaylistViewModel(private val playlistInteractor: PlaylistsInteractor) : V
     }
 
     private fun getPlaylist(playlistId: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             playlistInteractor.getPlaylist(playlistId).collect { list ->
                 playlist = list
             }
