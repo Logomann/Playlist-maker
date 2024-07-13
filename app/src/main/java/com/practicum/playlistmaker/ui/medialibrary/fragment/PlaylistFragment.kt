@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver.OnPreDrawListener
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -54,6 +55,10 @@ class PlaylistFragment : Fragment() {
             requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).isVisible =
                 false
         }
+        if (requireActivity().findViewById<TextView>(R.id.bottom_tv) != null) {
+            requireActivity().findViewById<TextView>(R.id.bottom_tv).isVisible = false
+        }
+        menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         viewModel.getTracks()
     }
 
@@ -67,6 +72,20 @@ class PlaylistFragment : Fragment() {
             requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).isVisible =
                 false
         }
+
+        binding.playlistShareBtn.viewTreeObserver.addOnPreDrawListener(object : OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                if (binding.playlistShareBtn.viewTreeObserver.isAlive) {
+                    binding.playlistShareBtn.viewTreeObserver.removeOnPreDrawListener(this)
+                }
+                val height =
+                    binding.coordinator.height - binding.playlistShareBtn.bottom - binding.playlistShareBtn.height
+                bottomSheetBehavior.peekHeight = height
+                return true
+            }
+        })
+
+
         arguments?.let { viewModel.setPlaylist(it.getString(PLAYLIST_KEY).toString()) }
         return binding.root
     }
@@ -77,19 +96,14 @@ class PlaylistFragment : Fragment() {
 
         val bottomSheetContainer = binding.playlistBottomSheet
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer)
-        val display = requireContext().resources.displayMetrics
-        bottomSheetBehavior.peekHeight = display.heightPixels / 3
-
         val menuBottomSheetContainer = binding.playlistMenuBottomSheet
         menuBottomSheetBehavior = BottomSheetBehavior.from(menuBottomSheetContainer)
-        menuBottomSheetBehavior.peekHeight = display.heightPixels / 3
         binding.playlistArrow.setOnClickListener {
             findNavController().navigateUp()
         }
 
         binding.playlistShareBtn.setOnClickListener {
             sharePlaylist()
-
         }
         menuBottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
@@ -123,12 +137,7 @@ class PlaylistFragment : Fragment() {
             deletePlaylist()
         }
         binding.editInfoLl.setOnClickListener {
-            val json = Gson().toJson(playlist)
-            findNavController().navigate(
-                R.id.action_playlistFragment_to_editPlaylistFragment, bundleOf(
-                    PLAYLIST_KEY to json
-                )
-            )
+            editPlaylist()
         }
 
         val trackRecyclerView = binding.playlistBottomSheetRecycler
@@ -197,11 +206,18 @@ class PlaylistFragment : Fragment() {
 
         }
 
+
     }
 
+
     override fun onDestroy() {
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).visibility =
-            View.VISIBLE
+        if (requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view) != null) {
+            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).isVisible =
+                true
+        }
+        if (requireActivity().findViewById<TextView>(R.id.bottom_tv) != null) {
+            requireActivity().findViewById<TextView>(R.id.bottom_tv).isVisible = true
+        }
         super.onDestroy()
     }
 
@@ -222,7 +238,7 @@ class PlaylistFragment : Fragment() {
 
 
     private fun setOnLongClickItem(track: Track) {
-        val confirmDialog = MaterialAlertDialogBuilder(requireContext())
+        val confirmDialog = MaterialAlertDialogBuilder(requireContext(), R.style.DialogStyle)
             .setTitle(getString(R.string.delete_track))
             .setMessage(getString(R.string.delete_track_confirm))
             .setNegativeButton(getString(R.string.cancel)) { _, _ ->
@@ -234,11 +250,22 @@ class PlaylistFragment : Fragment() {
 
     }
 
+    private fun editPlaylist() {
+        menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        val json = Gson().toJson(playlist)
+        findNavController().navigate(
+            R.id.action_playlistFragment_to_editPlaylistFragment, bundleOf(
+                PLAYLIST_KEY to json
+            )
+        )
+    }
+
     private fun deletePlaylist() {
         menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        val confirmDialog = MaterialAlertDialogBuilder(requireContext())
+        val confirmDialog = MaterialAlertDialogBuilder(requireContext(),R.style.DialogStyle)
             .setTitle(getString(R.string.delete_playlist))
-            .setMessage(getString(R.string.want_to_delete_playlist) + " \"${binding.playlistName.text}\"?")
+            .setMessage(getString(R.string.want_to_delete_playlist) + " «${binding.playlistName.text}»?")
             .setNegativeButton(getString(R.string.no)) { _, _ ->
 
             }.setPositiveButton(getString(R.string.yes)) { _, _ ->
@@ -263,6 +290,7 @@ class PlaylistFragment : Fragment() {
         if (listOfTracks.isEmpty()) {
             showMessage()
         } else {
+            menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             viewModel.sharePlaylist(sumOfTracks)
         }
     }

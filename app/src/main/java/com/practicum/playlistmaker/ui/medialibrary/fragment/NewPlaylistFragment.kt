@@ -1,13 +1,13 @@
 package com.practicum.playlistmaker.ui.medialibrary.fragment
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
@@ -28,6 +28,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.practicum.playlistmaker.ui.medialibrary.NewPlaylistScreenState
 import com.practicum.playlistmaker.ui.medialibrary.view_model.NewPlaylistViewModel
+import com.practicum.playlistmaker.util.Constants
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -39,7 +40,6 @@ open class NewPlaylistFragment : Fragment() {
     private lateinit var editTextDescription: TextInputLayout
     private var isCoverSet = false
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
-    lateinit var coverUri: Uri
 
 
     override fun onCreateView(
@@ -52,6 +52,13 @@ open class NewPlaylistFragment : Fragment() {
             requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).isVisible =
                 false
         }
+        if (requireActivity().findViewById<TextView>(R.id.bottom_tv) != null) {
+            requireActivity().findViewById<TextView>(R.id.bottom_tv).isVisible = false
+        }
+        if (savedInstanceState != null) {
+            savedInstanceState.getString(Constants.COVER_KEY)?.let { setCover(it) }
+        }
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         editTextName = binding.newPlaylistName
         editTextDescription = binding.newPlaylistDescription
         return binding.root
@@ -142,6 +149,11 @@ open class NewPlaylistFragment : Fragment() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(Constants.COVER_KEY, viewModel.getUri().toString())
+    }
+
     protected fun setCover(path: String) {
         val cornerRadius = resources.getDimensionPixelSize(R.dimen.track_cover_radius)
         Glide.with(this)
@@ -153,7 +165,7 @@ open class NewPlaylistFragment : Fragment() {
         binding.newPlaylistCover.setBackgroundResource(0)
         binding.newPlaylistCover.scaleType = ImageView.ScaleType.FIT_XY
         isCoverSet = true
-        coverUri = path.toUri()
+        viewModel.setUri(path.toUri())
     }
 
     @SuppressLint("ResourceType")
@@ -201,6 +213,10 @@ open class NewPlaylistFragment : Fragment() {
             requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).isVisible =
                 true
         }
+        if (requireActivity().findViewById<TextView>(R.id.bottom_tv) != null) {
+            requireActivity().findViewById<TextView>(R.id.bottom_tv).isVisible = true
+        }
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         super.onDestroy()
     }
 
@@ -226,7 +242,6 @@ open class NewPlaylistFragment : Fragment() {
     private fun createPlaylist() {
         if (isCoverSet) {
             viewModel.saveImage(
-                coverUri.toString(),
                 editTextName.editText!!.text.toString(),
                 editTextDescription.editText?.text.toString()
             )

@@ -4,8 +4,6 @@ package com.practicum.playlistmaker.ui.medialibrary.fragment
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.model.Playlist
 import com.practicum.playlistmaker.ui.medialibrary.EditPlaylistScreenState
@@ -21,29 +19,16 @@ class EditPlaylistFragment : NewPlaylistFragment() {
         super.onViewCreated(view, savedInstanceState)
         arguments?.let {
             val json = it.getString(PLAYLIST_KEY)
-            val type = object : TypeToken<Playlist>() {}.type
-            val playlist: Playlist = Gson().fromJson(json, type)
-            viewModel.getData(playlist)
+            viewModel.getData(json)
         }
 
         viewModel.renderState().observe(viewLifecycleOwner) { state ->
             when (state) {
                 is EditPlaylistScreenState.Content -> {
                     setCover(state.playlist.plCover.toString())
-                    binding.newPlaylistName.editText?.setText(state.playlist.plName)
-                    binding.newPlaylistDescription.editText?.setText(state.playlist.plDescription)
-                    binding.newPlaylistTopTv.text = getString(R.string.edit)
-                    binding.newPlaylistCreateBtn.text = getString(R.string.save)
-                    binding.newPlaylistCreateBtn.isEnabled = true
+                    setText(state.playlist)
                     binding.newPlaylistCreateBtn.setOnClickListener {
-                        val playlist = Playlist(
-                            plId = state.playlist.plId,
-                            plName = binding.newPlaylistName.editText!!.text.toString(),
-                            plDescription = binding.newPlaylistDescription.editText!!.text.toString(),
-                            plCover = coverUri.toString(),
-                            plTracksIDs = state.playlist.plTracksIDs
-                        )
-                        viewModel.updatePlaylist(playlist)
+                        updatePlaylist(state.playlist)
                         findNavController().navigateUp()
                     }
                     binding.newPlaylistArrow.setOnClickListener {
@@ -54,5 +39,21 @@ class EditPlaylistFragment : NewPlaylistFragment() {
 
         }
     }
+
+    private fun setText(playlist: Playlist) {
+        binding.newPlaylistName.editText?.setText(playlist.plName)
+        binding.newPlaylistDescription.editText?.setText(playlist.plDescription)
+        binding.newPlaylistTopTv.text = getString(R.string.edit)
+        binding.newPlaylistCreateBtn.text = getString(R.string.save)
+        binding.newPlaylistCreateBtn.isEnabled = true
+    }
+
+    private fun updatePlaylist(playlist: Playlist) {
+        val name = binding.newPlaylistName.editText?.text.toString()
+        val description = binding.newPlaylistDescription.editText?.text.toString()
+        val cover = viewModel.getUri().toString()
+        viewModel.updatePlaylist(playlist, name, description, cover)
+    }
+
 
 }

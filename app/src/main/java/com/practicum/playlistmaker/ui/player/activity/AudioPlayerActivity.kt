@@ -97,7 +97,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             finish()
         }
         playButton = binding.trackPlayBtn
-        playButton?.isEnabled = false
+        playButton!!.isEnabled = false
         playButton?.setOnClickListener {
             viewModel.playBack()
         }

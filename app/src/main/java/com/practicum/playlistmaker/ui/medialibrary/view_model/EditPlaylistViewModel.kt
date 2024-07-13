@@ -3,6 +3,8 @@ package com.practicum.playlistmaker.ui.medialibrary.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.domain.medialibrary.NewPlaylistInteractor
 import com.practicum.playlistmaker.domain.model.Playlist
 import com.practicum.playlistmaker.ui.medialibrary.EditPlaylistScreenState
@@ -18,7 +20,9 @@ class EditPlaylistViewModel(private val interactor: NewPlaylistInteractor) :
         return screenStateLiveData
     }
 
-    fun getData(playlist: Playlist) {
+    fun getData(json: String?) {
+        val type = object : TypeToken<Playlist>() {}.type
+        val playlist: Playlist = Gson().fromJson(json, type)
         process(playlist)
 
     }
@@ -27,9 +31,17 @@ class EditPlaylistViewModel(private val interactor: NewPlaylistInteractor) :
         screenStateLiveData.postValue(EditPlaylistScreenState.Content(playlist))
     }
 
-    fun updatePlaylist(playlist: Playlist) {
+    fun updatePlaylist(playlist: Playlist, name: String, description: String, cover: String?) {
+        val list = Playlist(
+            plId = playlist.plId,
+            plName = name,
+            plDescription = description,
+            plTracksIDs = playlist.plTracksIDs,
+            plCover = cover
+        )
+
         viewModelScope.launch(Dispatchers.IO) {
-            interactor.updatePlaylist(playlist)
+            interactor.updatePlaylist(list)
         }
 
     }

@@ -28,6 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:ellipsize="end"
+            android:maxLines="1"
             android:fontFamily="@font/ys_display_reg"
             android:textColor="@color/bottom_nav_color"
             android:textFontWeight="400"

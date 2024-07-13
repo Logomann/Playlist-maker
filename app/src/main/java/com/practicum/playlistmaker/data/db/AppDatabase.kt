@@ -7,7 +7,7 @@ import com.practicum.playlistmaker.data.db.dao.TrackDao
 import com.practicum.playlistmaker.data.db.dao.TracksInPlaylistsDao
 
 @Database(
-    version = 2,
+    version = 1,
     entities = [TrackEntity::class, PlaylistEntity::class, TracksInPlaylistsEntity::class]
 )
 abstract class AppDatabase : RoomDatabase() {

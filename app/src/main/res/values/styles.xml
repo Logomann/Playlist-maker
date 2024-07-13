@@ -163,6 +163,7 @@
         <item name="colorControlActivated">@color/main_text_color</item>
 
     </style>
+
     <style name="NewPlaylistInputBoxStyle">
         <item name="android:fontFamily">@font/ys_display_reg</item>
         <item name="android:textSize">16sp</item>
@@ -172,12 +173,53 @@
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">1</item>
     </style>
+
     <style name="PlaylistBottomSheetTvStyle">
         <item name="android:fontFamily">@font/ys_display_reg</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textFontWeight">400</item>
-        <item name="android:textColor">@color/main_text_color</item>
+        <item name="android:textColor">@color/bottom_nav_color</item>
         <item name="android:layout_marginStart">16dp</item>
+    </style>
 
+    <style name="DialogStyle" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="materialAlertDialogTitleTextStyle">@style/DialogTitleStyle</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/DialogBodyStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/DialogPositiveButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/DialogNegativeButtonStyle</item>
+        <item name="android:background">@color/white</item>
+
+    </style>
+
+    <style name="DialogBodyStyle" parent="@style/MaterialAlertDialog.MaterialComponents.Body.Text">
+        <item name="android:textColor">@color/main_text_color</item>
+        <item name="fontFamily">@font/roboto_regular</item>
+        <item name="fontWeight">400</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="DialogTitleStyle" parent="@style/MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">@color/main_text_color</item>
+        <item name="fontFamily">@font/roboto_regular</item>
+        <item name="fontWeight">400</item>
+    </style>
+    <style name="DialogPositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/progress_bar_blue</item>
+        <item name="fontFamily">@font/roboto_regular</item>
+        <item name="fontWeight">500</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+    <style name="DialogNegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/progress_bar_blue</item>
+        <item name="fontFamily">@font/roboto_regular</item>
+        <item name="fontWeight">500</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">end|center_vertical</item>
     </style>
 </resources>
