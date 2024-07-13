@@ -28,7 +28,7 @@ class FavoriteTracksRepositoryImpl(
 
     override fun isFavorite(trackId: Int): Flow<Boolean> = flow {
         val trackEntity = appDatabase.trackDao().getTrack(trackId)
-        if (trackEntity!= null) {
+        if (trackEntity != null) {
             emit(trackEntity.isFavorite)
         }
     }
