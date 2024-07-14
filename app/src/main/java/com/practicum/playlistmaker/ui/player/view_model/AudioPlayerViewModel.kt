@@ -139,7 +139,6 @@ class AudioPlayerViewModel(
                 } else {
                     favoriteStateLiveData.postValue(FavoriteState.NotFavorite)
                 }
-
             }
         }
 
