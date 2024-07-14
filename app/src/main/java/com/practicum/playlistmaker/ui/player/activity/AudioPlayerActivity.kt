@@ -18,6 +18,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.util.TRACK_KEY
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.practicum.playlistmaker.domain.model.Playlist
+import com.practicum.playlistmaker.domain.model.track.model.Track
 import com.practicum.playlistmaker.ui.medialibrary.PlaylistsScreenState
 import com.practicum.playlistmaker.ui.medialibrary.fragment.NewPlaylistFragment
 import com.practicum.playlistmaker.ui.player.AddPlaylistState
@@ -38,6 +39,8 @@ class AudioPlayerActivity : AppCompatActivity() {
         setOnItemClick(it)
     }
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var track: Track
+    private lateinit var url: String
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,8 +106,8 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
 
         playingTime = binding.playingTime
-        val url: String?
-        val track = viewModel.getTrack(intent.getStringExtra(TRACK_KEY))
+        url = intent.getStringExtra(TRACK_KEY).toString()
+        track = viewModel.getTrack(url)
         val cornerRadius = resources.getDimensionPixelSize(R.dimen.track_cover_radius)
         val trackUrl = viewModel.getImage(track.artworkUrl100)
 
@@ -117,7 +120,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         val trackName = binding.songName
         trackName.text = track.trackName
-        url = track.previewUrl
+        val url: String? = track.previewUrl
 
 
         val artistName = binding.artistName
@@ -207,6 +210,8 @@ class AudioPlayerActivity : AppCompatActivity() {
 
 
     }
+
+
 
     private fun setOnItemClick(playlist: Playlist) {
         viewModel.onPlaylistClicked(playlist)

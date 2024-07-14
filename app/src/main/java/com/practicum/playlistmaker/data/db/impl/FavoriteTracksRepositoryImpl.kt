@@ -30,6 +30,8 @@ class FavoriteTracksRepositoryImpl(
         val trackEntity = appDatabase.trackDao().getTrack(trackId)
         if (trackEntity != null) {
             emit(trackEntity.isFavorite)
+        } else {
+            emit(false)
         }
     }
 
