@@ -203,10 +203,7 @@ class PlaylistFragment : Fragment() {
                     findNavController().navigateUp()
                 }
             }
-
         }
-
-
     }
 
 
@@ -233,7 +230,6 @@ class PlaylistFragment : Fragment() {
                 TRACK_KEY to json
             )
         )
-
     }
 
 
@@ -263,7 +259,7 @@ class PlaylistFragment : Fragment() {
 
     private fun deletePlaylist() {
         menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        val confirmDialog = MaterialAlertDialogBuilder(requireContext(),R.style.DialogStyle)
+        val confirmDialog = MaterialAlertDialogBuilder(requireContext(), R.style.DialogStyle)
             .setTitle(getString(R.string.delete_playlist))
             .setMessage(getString(R.string.want_to_delete_playlist) + " «${binding.playlistName.text}»?")
             .setNegativeButton(getString(R.string.no)) { _, _ ->
