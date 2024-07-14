@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.ui.medialibrary.view_model
 
 
-
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -15,7 +14,8 @@ import kotlinx.coroutines.launch
 
 class EditPlaylistViewModel(private val interactor: NewPlaylistInteractor) :
     NewPlaylistViewModel(interactor) {
-
+    private var nameText: String = ""
+    private var descriptionText: String = ""
     private val screenStateLiveData = MutableLiveData<EditPlaylistScreenState>()
 
     fun renderState(): LiveData<EditPlaylistScreenState> {
@@ -26,9 +26,34 @@ class EditPlaylistViewModel(private val interactor: NewPlaylistInteractor) :
     fun getData(json: String?) {
         val type = object : TypeToken<Playlist>() {}.type
         val playlist: Playlist = Gson().fromJson(json, type)
-        playlist.plCover = getUri().toString()
-        process(playlist)
+        val cover: String = if (getUri() != null) {
+            getUri().toString()
+        } else {
+            playlist.plCover.toString()
+        }
+        val name: String = nameText.ifEmpty {
+            playlist.plName
+        }
+        val description: String = descriptionText.ifEmpty {
+            playlist.plDescription.toString()
+        }
+        val list = Playlist(
+            plId = playlist.plId,
+            plName = name,
+            plDescription = description,
+            plTracksIDs = playlist.plTracksIDs,
+            plCover = cover
+        )
+        process(list)
 
+    }
+
+    fun setName(text: String) {
+        nameText = text
+    }
+
+    fun setDescription(text: String) {
+        descriptionText = text
     }
 
 

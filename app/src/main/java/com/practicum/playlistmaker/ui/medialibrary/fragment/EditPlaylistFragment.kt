@@ -2,6 +2,8 @@ package com.practicum.playlistmaker.ui.medialibrary.fragment
 
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import com.practicum.playlistmaker.R
@@ -23,6 +25,37 @@ class EditPlaylistFragment : NewPlaylistFragment() {
             viewModel.getData(json)
         }
 
+        val textWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModel.setName(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+
+        }
+
+        val textWatcherDesc = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModel.setDescription(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+
+        }
+        binding.newPlaylistName.editText?.addTextChangedListener(textWatcher)
+        binding.newPlaylistDescription.editText?.addTextChangedListener(textWatcherDesc)
 
 
         viewModel.renderState().observe(viewLifecycleOwner) { state ->
