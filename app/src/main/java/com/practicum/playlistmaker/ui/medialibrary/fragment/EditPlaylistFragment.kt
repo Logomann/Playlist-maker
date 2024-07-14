@@ -8,6 +8,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.model.Playlist
 import com.practicum.playlistmaker.ui.medialibrary.EditPlaylistScreenState
 import com.practicum.playlistmaker.ui.medialibrary.view_model.EditPlaylistViewModel
+import com.practicum.playlistmaker.util.Constants
 import com.practicum.playlistmaker.util.PLAYLIST_KEY
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -39,7 +40,13 @@ class EditPlaylistFragment : NewPlaylistFragment() {
 
         }
     }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (viewModel.getUri() != null) {
+            outState.putString(Constants.COVER_KEY, viewModel.getUri().toString())
+        }
 
+    }
     private fun setText(playlist: Playlist) {
         binding.newPlaylistName.editText?.setText(playlist.plName)
         binding.newPlaylistDescription.editText?.setText(playlist.plDescription)
