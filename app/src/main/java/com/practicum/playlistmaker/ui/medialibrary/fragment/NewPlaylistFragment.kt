@@ -151,7 +151,10 @@ open class NewPlaylistFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(Constants.COVER_KEY, viewModel.getUri().toString())
+        if (viewModel.getUri() !=null) {
+            outState.putString(Constants.COVER_KEY, viewModel.getUri().toString())
+        }
+
     }
 
     protected fun setCover(path: String) {
