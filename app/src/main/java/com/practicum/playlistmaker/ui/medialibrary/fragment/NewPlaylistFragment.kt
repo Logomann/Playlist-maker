@@ -55,9 +55,10 @@ open class NewPlaylistFragment : Fragment() {
         if (requireActivity().findViewById<TextView>(R.id.bottom_tv) != null) {
             requireActivity().findViewById<TextView>(R.id.bottom_tv).isVisible = false
         }
-        if (savedInstanceState != null) {
-            savedInstanceState.getString(Constants.COVER_KEY)?.let { setCover(it) }
+        if (viewModel.getUri() != null) {
+            setCover(viewModel.getUri().toString())
         }
+
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         editTextName = binding.newPlaylistName
         editTextDescription = binding.newPlaylistDescription

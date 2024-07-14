@@ -1,5 +1,7 @@
 package com.practicum.playlistmaker.ui.medialibrary.view_model
 
+
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -20,12 +22,15 @@ class EditPlaylistViewModel(private val interactor: NewPlaylistInteractor) :
         return screenStateLiveData
     }
 
+
     fun getData(json: String?) {
         val type = object : TypeToken<Playlist>() {}.type
         val playlist: Playlist = Gson().fromJson(json, type)
+        playlist.plCover = getUri().toString()
         process(playlist)
 
     }
+
 
     private fun process(playlist: Playlist) {
         screenStateLiveData.postValue(EditPlaylistScreenState.Content(playlist))

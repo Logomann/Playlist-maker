@@ -8,12 +8,12 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.model.Playlist
 import com.practicum.playlistmaker.ui.medialibrary.EditPlaylistScreenState
 import com.practicum.playlistmaker.ui.medialibrary.view_model.EditPlaylistViewModel
-import com.practicum.playlistmaker.util.Constants
 import com.practicum.playlistmaker.util.PLAYLIST_KEY
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class EditPlaylistFragment : NewPlaylistFragment() {
     override val viewModel by viewModel<EditPlaylistViewModel>()
+
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -22,6 +22,8 @@ class EditPlaylistFragment : NewPlaylistFragment() {
             val json = it.getString(PLAYLIST_KEY)
             viewModel.getData(json)
         }
+
+
 
         viewModel.renderState().observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -40,13 +42,6 @@ class EditPlaylistFragment : NewPlaylistFragment() {
 
         }
     }
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        if (viewModel.getUri() != null) {
-            outState.putString(Constants.COVER_KEY, viewModel.getUri().toString())
-        }
-
-    }
     private fun setText(playlist: Playlist) {
         binding.newPlaylistName.editText?.setText(playlist.plName)
         binding.newPlaylistDescription.editText?.setText(playlist.plDescription)
@@ -61,6 +56,4 @@ class EditPlaylistFragment : NewPlaylistFragment() {
         val cover = viewModel.getUri().toString()
         viewModel.updatePlaylist(playlist, name, description, cover)
     }
-
-
 }
