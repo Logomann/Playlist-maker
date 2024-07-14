@@ -73,6 +73,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/new_playlist_cover" >
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/name_et"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             style="@style/NewPlaylistInputBoxStyle"
@@ -93,6 +94,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/new_playlist_name" >
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/description_et"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             style="@style/NewPlaylistInputBoxStyle"
