@@ -18,6 +18,7 @@ import com.practicum.playlistmaker.ui.player.AudioPlayerState
 import com.practicum.playlistmaker.ui.player.FavoriteState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -39,6 +40,7 @@ class AudioPlayerViewModel(
     private val playlistsBottomSheetLiveData =
         MutableLiveData<PlaylistsScreenState>(PlaylistsScreenState.Default)
     private val addedTrack = MutableLiveData<AddPlaylistState>()
+
 
     fun getPlaylists() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -129,8 +131,8 @@ class AudioPlayerViewModel(
             timeMillis = track.trackTimeMillis!!
         }
         track.trackTimeMillis = timeMillis
-        viewModelScope.launch {
-            favoriteTracksInteractor.isFavorite(track.trackId).collect { data ->
+        viewModelScope.launch(Dispatchers.IO) {
+            getTrack(track.trackId).await().collect { data ->
                 track.isFavorite = data
                 if (data) {
                     favoriteStateLiveData.postValue(FavoriteState.Favorite)
@@ -156,12 +158,16 @@ class AudioPlayerViewModel(
         )
     }
 
+    private fun getTrack(trackId: Int) = viewModelScope.async {
+        favoriteTracksInteractor.isFavorite(trackId)
+    }
 
     private fun play() {
         apInteractor.start()
         playerState = AudioPlayerState.PLAYING
         startTimer()
     }
+
 
     private fun startTimer() {
         timerJob = viewModelScope.launch {
