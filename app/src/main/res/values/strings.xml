@@ -48,12 +48,33 @@
     <string name="track_added">Added to playlist %s</string>
     <string name="track_already_in_playlist">The track has already been added to the playlist %s</string>
     <string name="ok">OK</string>
+    <string name="delete_track">Delete track</string>
+    <string name="delete_track_confirm">Are you sure you want to delete the track from the playlist?</string>
+    <string name="delete">Delete</string>
+    <string name="no_tracks_in_playlist">This playlist does not have a list of tracks to share</string>
+    <string name="share">Share</string>
+    <string name="edit_info">Edit information</string>
+    <string name="delete_playlist">Delete playlist</string>
+    <string name="want_to_delete_playlist">Want to delete playlist</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+    <string name="no_tracks">No tracks have been added to the playlist</string>
+
     <plurals name="track_quantity">
         <item quantity="zero">tracks</item>
         <item quantity="one">track</item>
         <item quantity="few">tracks</item>
         <item quantity="many">tracks</item>
         <item quantity="other">tracks</item>
+    </plurals>
+    <plurals name="time_of_tracks_quantity">
+        <item quantity="zero">minutes</item>
+        <item quantity="one">minute</item>
+        <item quantity="few">minutes</item>
+        <item quantity="many">minutes</item>
+        <item quantity="other">minutes</item>
     </plurals>
 
 </resources>

@@ -3,7 +3,7 @@ package com.practicum.playlistmaker.ui.medialibrary
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.practicum.playlistmaker.ui.medialibrary.fragment.FavoriteTracksFragment
-import com.practicum.playlistmaker.ui.medialibrary.fragment.PlaylistFragment
+import com.practicum.playlistmaker.ui.medialibrary.fragment.PlaylistListFragment
 
 class MediaLibraryAdapter(hostFragment: Fragment) : FragmentStateAdapter(hostFragment) {
     override fun getItemCount(): Int {
@@ -13,7 +13,7 @@ class MediaLibraryAdapter(hostFragment: Fragment) : FragmentStateAdapter(hostFra
     override fun createFragment(position: Int): Fragment {
         return when (position) {
             0 -> FavoriteTracksFragment.newInstance()
-            1 -> PlaylistFragment.newInstance()
+            1 -> PlaylistListFragment.newInstance()
             else -> FavoriteTracksFragment.newInstance()
         }
     }

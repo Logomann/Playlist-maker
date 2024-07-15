@@ -18,6 +18,7 @@ import com.practicum.playlistmaker.ui.player.AudioPlayerState
 import com.practicum.playlistmaker.ui.player.FavoriteState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -39,6 +40,7 @@ class AudioPlayerViewModel(
     private val playlistsBottomSheetLiveData =
         MutableLiveData<PlaylistsScreenState>(PlaylistsScreenState.Default)
     private val addedTrack = MutableLiveData<AddPlaylistState>()
+
 
     fun getPlaylists() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -128,6 +130,18 @@ class AudioPlayerViewModel(
         if (!track.trackTimeMillis.isNullOrEmpty()) {
             timeMillis = track.trackTimeMillis!!
         }
+        track.trackTimeMillis = timeMillis
+        viewModelScope.launch(Dispatchers.IO) {
+            getTrack(track.trackId).await().collect { data ->
+                track.isFavorite = data
+                if (data) {
+                    favoriteStateLiveData.postValue(FavoriteState.Favorite)
+                } else {
+                    favoriteStateLiveData.postValue(FavoriteState.NotFavorite)
+                }
+            }
+        }
+
         return Track(
             track.trackId,
             track.trackName,
@@ -138,8 +152,13 @@ class AudioPlayerViewModel(
             track.releaseDate,
             track.primaryGenreName,
             track.country,
-            track.previewUrl
+            track.previewUrl,
+            track.isFavorite
         )
+    }
+
+    private fun getTrack(trackId: Int) = viewModelScope.async {
+        favoriteTracksInteractor.isFavorite(trackId)
     }
 
     private fun play() {
@@ -147,6 +166,7 @@ class AudioPlayerViewModel(
         playerState = AudioPlayerState.PLAYING
         startTimer()
     }
+
 
     private fun startTimer() {
         timerJob = viewModelScope.launch {
@@ -159,9 +179,11 @@ class AudioPlayerViewModel(
 
     fun pause() {
         timerJob?.cancel()
-        apInteractor.pause()
-        screenStateLiveData.postValue(AudioPlayerScreenState.Paused)
-        playerState = AudioPlayerState.PAUSED
+        if (playerState == AudioPlayerState.PLAYING) {
+            apInteractor.pause()
+            screenStateLiveData.postValue(AudioPlayerScreenState.Paused)
+            playerState = AudioPlayerState.PAUSED
+        }
     }
 
     fun playBack() {
@@ -180,7 +202,7 @@ class AudioPlayerViewModel(
 
     private fun release() {
         apInteractor.release()
-        timerJob?.start()
+        timerJob?.cancel()
     }
 
     override fun onCleared() {

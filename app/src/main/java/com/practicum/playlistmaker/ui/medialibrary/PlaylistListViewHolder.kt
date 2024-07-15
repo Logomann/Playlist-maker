@@ -8,7 +8,7 @@ import com.practicum.playlistmaker.databinding.PlaylistViewBinding
 import com.practicum.playlistmaker.domain.model.Playlist
 import java.util.Locale
 
-class PlaylistViewHolder(private val binding: PlaylistViewBinding) :
+class PlaylistListViewHolder(private val binding: PlaylistViewBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(playlist: Playlist) {
@@ -24,7 +24,7 @@ class PlaylistViewHolder(private val binding: PlaylistViewBinding) :
 
         binding.newPlaylistName.text = playlist.plName
         val size = playlist.plTracksIDs.size
-        val track = binding.root.context.resources.getQuantityString(R.plurals.track_quantity,size)
-        binding.playlistSize.text = String.format(Locale.US, "%d %s", size, track)
+        val track = binding.root.context.resources.getQuantityString(R.plurals.track_quantity, size)
+        binding.playlistSize.text = String.format(Locale.getDefault(), "%d %s", size, track)
     }
 }

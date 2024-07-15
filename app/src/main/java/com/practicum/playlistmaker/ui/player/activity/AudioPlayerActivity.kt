@@ -97,13 +97,12 @@ class AudioPlayerActivity : AppCompatActivity() {
             finish()
         }
         playButton = binding.trackPlayBtn
-        playButton?.isEnabled = false
+        playButton!!.isEnabled = false
         playButton?.setOnClickListener {
             viewModel.playBack()
         }
 
         playingTime = binding.playingTime
-        val url: String?
         val track = viewModel.getTrack(intent.getStringExtra(TRACK_KEY))
         val cornerRadius = resources.getDimensionPixelSize(R.dimen.track_cover_radius)
         val trackUrl = viewModel.getImage(track.artworkUrl100)
@@ -117,7 +116,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         val trackName = binding.songName
         trackName.text = track.trackName
-        url = track.previewUrl
+        val url = track.previewUrl
 
 
         val artistName = binding.artistName
@@ -207,6 +206,8 @@ class AudioPlayerActivity : AppCompatActivity() {
 
 
     }
+
+
 
     private fun setOnItemClick(playlist: Playlist) {
         viewModel.onPlaylistClicked(playlist)

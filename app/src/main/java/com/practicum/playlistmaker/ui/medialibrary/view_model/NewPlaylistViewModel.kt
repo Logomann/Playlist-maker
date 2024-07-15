@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.ui.medialibrary.view_model
 
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,8 +12,9 @@ import com.practicum.playlistmaker.ui.medialibrary.NewPlaylistScreenState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class NewPlaylistViewModel(private val interactor: NewPlaylistInteractor) : ViewModel() {
+open class NewPlaylistViewModel(private val interactor: NewPlaylistInteractor) : ViewModel() {
 
+    private var uri: Uri? = null
     private val screenStateLiveData = MutableLiveData<NewPlaylistScreenState>()
 
     fun render(): LiveData<NewPlaylistScreenState> {
@@ -28,11 +30,19 @@ class NewPlaylistViewModel(private val interactor: NewPlaylistInteractor) : View
 
     }
 
-    fun saveImage(filePath: String, fileName: String, description: String?) {
+    fun setUri(uri: Uri) {
+        this.uri = uri
+    }
+
+    fun getUri(): Uri? {
+        return uri
+    }
+
+    fun saveImage(fileName: String, description: String?) {
         screenStateLiveData.postValue(NewPlaylistScreenState.Loading)
         viewModelScope.launch(Dispatchers.IO) {
             interactor
-                .saveImage(filePath)
+                .saveImage(uri.toString())
                 .collect { path ->
                     createPlaylist(fileName, description, path)
                 }

@@ -30,6 +30,7 @@ class SearchRepositoryImpl(
                 with(response as TrackSearchResponse) {
                     val favoriteTracks = appDatabase.trackDao().getTracksId()
                     val data = results.map {
+
                         Track(
                             it.trackId,
                             it.trackName,
@@ -41,7 +42,7 @@ class SearchRepositoryImpl(
                             it.artworkUrl100,
                             it.collectionName,
                             LocalDateTime.parse(
-                                it.releaseDate,
+                                it.releaseDate ?: "0000-10-21T12:00:00Z",
                                 DateTimeFormatter.ISO_DATE_TIME
                             ).year.toString(),
                             it.primaryGenreName,

@@ -1,18 +1,20 @@
 package com.practicum.playlistmaker.ui.medialibrary.fragment
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.navigation.fragment.findNavController
@@ -26,18 +28,18 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.practicum.playlistmaker.ui.medialibrary.NewPlaylistScreenState
 import com.practicum.playlistmaker.ui.medialibrary.view_model.NewPlaylistViewModel
+import com.practicum.playlistmaker.util.Constants
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class NewPlaylistFragment : Fragment() {
+open class NewPlaylistFragment : Fragment() {
     private var _binding: FragmentNewPlaylistBinding? = null
-    private val binding get() = _binding!!
-    private val viewModel by viewModel<NewPlaylistViewModel>()
+    protected val binding get() = _binding!!
+    open val viewModel by viewModel<NewPlaylistViewModel>()
     private lateinit var editTextName: TextInputLayout
     private lateinit var editTextDescription: TextInputLayout
     private var isCoverSet = false
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
-    private lateinit var coverUri: Uri
 
 
     override fun onCreateView(
@@ -47,9 +49,17 @@ class NewPlaylistFragment : Fragment() {
     ): View {
         _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
         if (requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view) != null) {
-            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).visibility =
-                View.GONE
+            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).isVisible =
+                false
         }
+        if (requireActivity().findViewById<TextView>(R.id.bottom_tv) != null) {
+            requireActivity().findViewById<TextView>(R.id.bottom_tv).isVisible = false
+        }
+        if (viewModel.getUri() != null) {
+            setCover(viewModel.getUri().toString())
+        }
+
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         editTextName = binding.newPlaylistName
         editTextDescription = binding.newPlaylistDescription
         return binding.root
@@ -79,17 +89,7 @@ class NewPlaylistFragment : Fragment() {
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
-                    val cornerRadius = resources.getDimensionPixelSize(R.dimen.track_cover_radius)
-                    Glide.with(this)
-                        .load(uri)
-                        .fitCenter()
-                        .transform(RoundedCorners(cornerRadius))
-                        .placeholder(R.drawable.placeholder)
-                        .into(binding.newPlaylistCover)
-                    binding.newPlaylistCover.setBackgroundResource(0)
-                    binding.newPlaylistCover.scaleType = ImageView.ScaleType.FIT_XY
-                    isCoverSet = true
-                    coverUri = uri
+                    setCover(uri.toString())
                 }
             }
         binding.newPlaylistCover.setOnClickListener {
@@ -150,6 +150,28 @@ class NewPlaylistFragment : Fragment() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (viewModel.getUri() != null) {
+            outState.putString(Constants.COVER_KEY, viewModel.getUri().toString())
+        }
+
+    }
+
+    protected fun setCover(path: String) {
+        val cornerRadius = resources.getDimensionPixelSize(R.dimen.track_cover_radius)
+        Glide.with(this)
+            .load(path)
+            .fitCenter()
+            .transform(RoundedCorners(cornerRadius))
+            .placeholder(R.drawable.placeholder)
+            .into(binding.newPlaylistCover)
+        binding.newPlaylistCover.setBackgroundResource(0)
+        binding.newPlaylistCover.scaleType = ImageView.ScaleType.FIT_XY
+        isCoverSet = true
+        viewModel.setUri(path.toUri())
+    }
+
     @SuppressLint("ResourceType")
     private fun setColors(layout: TextInputLayout, isEmpty: Boolean) {
         if (isEmpty) {
@@ -192,9 +214,13 @@ class NewPlaylistFragment : Fragment() {
 
     override fun onDestroy() {
         if (requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view) != null) {
-            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).visibility =
-                View.VISIBLE
+            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view).isVisible =
+                true
         }
+        if (requireActivity().findViewById<TextView>(R.id.bottom_tv) != null) {
+            requireActivity().findViewById<TextView>(R.id.bottom_tv).isVisible = true
+        }
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         super.onDestroy()
     }
 
@@ -220,7 +246,6 @@ class NewPlaylistFragment : Fragment() {
     private fun createPlaylist() {
         if (isCoverSet) {
             viewModel.saveImage(
-                coverUri.toString(),
                 editTextName.editText!!.text.toString(),
                 editTextDescription.editText?.text.toString()
             )
@@ -232,4 +257,6 @@ class NewPlaylistFragment : Fragment() {
 
         }
     }
+
+
 }
