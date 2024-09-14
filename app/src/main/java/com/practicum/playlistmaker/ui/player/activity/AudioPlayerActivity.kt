@@ -14,6 +14,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.util.TRACK_KEY
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
@@ -26,6 +28,7 @@ import com.practicum.playlistmaker.ui.player.AudioPlayerScreenState
 import com.practicum.playlistmaker.ui.player.FavoriteState
 import com.practicum.playlistmaker.ui.player.view_model.AudioPlayerViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 
 class AudioPlayerActivity : AppCompatActivity() {
@@ -44,7 +47,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         val bottomSheetContainer = binding.standardBottomSheet
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer)
 
@@ -146,6 +148,10 @@ class AudioPlayerActivity : AppCompatActivity() {
         country.text = track.country
         val isFavorite = binding.likeBtn
         isFavorite.setOnClickListener {
+            val analytics = FirebaseAnalytics.getInstance(this)
+            analytics.logEvent("OnFavorite_Clicked") {
+                param("TrackName", track.trackName)
+            }
             viewModel.onFavoriteClicked()
         }
         viewModel.isFavorite().observe(this) { favoriteState ->
